@@ -10,12 +10,12 @@ public class PurchaseValidator {
 	public static boolean validate(Purchase entity) {
 		boolean valid = true;
 		FacesMessage message = null;
-		String detail = "Campo Obrigatório";
-		String detail2 = "Não Encontrado";
+		String detail = "Campo Obrigat\u00F3rio";
+		String detail2 = "N\u00E3o Encontrado";
 
 		if (entity.getDescription() == null || entity.getDescription().equals("")) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descrição", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descri\u00E7\u00E3o", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		if (entity.getDate() == null) {

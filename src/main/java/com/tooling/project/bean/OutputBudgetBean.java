@@ -224,7 +224,7 @@ public class OutputBudgetBean implements Serializable {
 	public String sendMail(){
 		try {
 			Mail.sendMail(getEntitySelected());
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Solicitação de Orçamento", "Orçamento enviado ao Fornecedor!");
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Solicita\u00E7\u00E3o de Or\u00E7amento", "Or\u00E7amento enviado ao Fornecedor!");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

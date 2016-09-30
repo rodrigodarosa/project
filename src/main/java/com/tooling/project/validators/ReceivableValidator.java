@@ -10,8 +10,8 @@ public class ReceivableValidator {
 	public static boolean validate(Receivable entity) {
 		boolean valid = true;
 		FacesMessage message = null;
-		String detail = "Campo Obrigatório";
-		String detail2 = "Não encontrado";
+		String detail = "Campo Obrigat\u00F3rio";
+		String detail2 = "N\u00E3o Encontrado";
 
 		if (entity.getCustomer() == null) {
 			valid = false;
@@ -21,7 +21,7 @@ public class ReceivableValidator {
 		
 		if (entity.getDocumentNumber() == 0 || entity.getDocumentNumber() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nº do Documento", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "N\u00BA do Documento", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		
@@ -48,7 +48,7 @@ public class ReceivableValidator {
 		}
 		if (entity.getDischargeSituation() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situação", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situa\u00E7\u00E3o", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		if (entity.getTotalValue() == 0.0) {

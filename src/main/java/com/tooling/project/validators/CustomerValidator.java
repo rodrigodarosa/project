@@ -10,7 +10,7 @@ public class CustomerValidator {
 	public static boolean validate(Customer entity) {
 		boolean valid = true;
 		FacesMessage message = null;
-		String detail = "Campo Obrigatório";
+		String detail = "Campo Obrigat\u00F3rio";
 
 		if (entity.getName() == null || entity.getName().equals("")) {
 			valid = false;
@@ -19,7 +19,7 @@ public class CustomerValidator {
 		}
 		if (entity.getAddress() == null || entity.getAddress().equals("")) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Endereço", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Endere\u00E7o", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		if (entity.getTelephone() == null || entity.getTelephone().equals("")) {
