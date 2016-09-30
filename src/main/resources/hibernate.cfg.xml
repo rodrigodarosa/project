@@ -5,9 +5,9 @@
 <hibernate-configuration>
 	<session-factory name="toolingProject">
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.password">root</property>
+		<property name="hibernate.connection.password">SwAJkrN-C68K</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/tooling</property>
-		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.username">adminGvn2MT8</property>
 		<property name="hibernate.default_schema">tooling</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="hibernate.hbm2ddl.auto">update</property>
