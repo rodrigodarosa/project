@@ -56,7 +56,7 @@ public class Mail {
             		  +"\n"
             		  +"Qualquer Dvida, entrar em contato!"
             		  +"\n\n"
-            		  +"Orçamento Solicitado por "+outputBudget.getEmployee().getName()+"\n"
+            		  +"Or\u00E7amento Solicitado por "+outputBudget.getEmployee().getName()+"\n"
             		  +"RESPONDER ESTA SOLICITA\u00C7\u00C3O DE OR\u00C7AMENTO NO SEGUINTE E-MAIL: " +outputBudget.getEmployee().getEmail()+"\n"
             		  +"\n\n\n"
             		  +"TechTools Ferramentaria."
