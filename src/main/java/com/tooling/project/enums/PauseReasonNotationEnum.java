@@ -1,7 +1,7 @@
 package com.tooling.project.enums;
 
 public enum PauseReasonNotationEnum {
-	LACK_OF_STUFF("Falta de Material"), ENERGY_BLACKOUT("Queda de Energia"), MECHANICAL_ISSUE("Problema Mecânico"), OTHERS_PRIORITIES("Outra Prioridade"), MEAL("Refeição"), REUNION("Reunião"), ;
+	LACK_OF_STUFF("Falta de Material"), ENERGY_BLACKOUT("Queda de Energia"), MECHANICAL_ISSUE("Problema Mec\u00E2nico"), OTHERS_PRIORITIES("Outra Prioridade"), MEAL("Refei\uFFFD\uFFFDo"), REUNION("Reuni\uFFFDo"), ;
 	
 	private final String label;
 

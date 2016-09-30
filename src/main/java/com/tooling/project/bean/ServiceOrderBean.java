@@ -564,7 +564,7 @@ public class ServiceOrderBean implements Serializable {
 		if(!notations.isEmpty()){
 			Util.extractReport("RelatorioPorOrdemDeServico-", notationsByServiceOrder(), "notationReport.jrxml");
 		}else{
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Ordem de Servi\u00E7o", "N�o h� apontamentos nesta Ordem de Servi�o");
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Ordem de Servi\u00E7o", "N\u00E3o h\u00E1 apontamentos nesta Ordem de Servi\u00E7o");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		return "";

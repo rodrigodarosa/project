@@ -182,7 +182,7 @@ public class CustomerBean implements Serializable {
 				city = null;
 				state = null;
 			}else{
-				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cliente", "Login J� Existente!");
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Funcion\u00E1rio", "Login Já Existente!");
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			}
 		}
