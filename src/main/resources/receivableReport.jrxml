@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employeeReport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b87ba828-1248-4922-9867-c8933b17f1bd">
+	<property name="ireport.zoom" value="2.143588810000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="41"/>
+	<property name="ireport.callouts" value="##Wed Mar 26 12:33:26 BRT 2014"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="ec8258d9-876c-4881-96a7-b569e7ea4d9a"/>
+	<subDataset name="Table Dataset 2" uuid="315a8b5d-eaf8-40a4-b2bf-98d75a645eb2"/>
+	<parameter name="logo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{logo}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="customer" class="com.tooling.project.model.Customer">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
+	<field name="dischargeSituation" class="com.tooling.project.enums.DischargeSituationEnum">
+		<fieldDescription><![CDATA[dischargeSituation]]></fieldDescription>
+	</field>
+	<field name="documentDate" class="java.util.Date">
+		<fieldDescription><![CDATA[documentDate]]></fieldDescription>
+	</field>
+	<field name="documentNumber" class="java.lang.Long">
+		<fieldDescription><![CDATA[documentNumber]]></fieldDescription>
+	</field>
+	<field name="sale" class="com.tooling.project.model.Sale">
+		<fieldDescription><![CDATA[sale]]></fieldDescription>
+	</field>
+	<field name="totalValue" class="java.lang.Float">
+		<fieldDescription><![CDATA[totalValue]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="47" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="87" height="45" uuid="b188df8e-bf89-4e45-9783-07de02fa2334"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="123" y="5" width="309" height="28" forecolor="#000000" uuid="b4ef1de7-64fb-49d7-94d1-b908082f5225"/>
+				<textElement textAlignment="Center">
+					<font fontName="Segoe UI" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Relatório de Contas  a Receber]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="432" y="0" width="80" height="20" uuid="01b863ae-49a1-4b66-bee0-0210b0799992"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="0" width="40" height="20" uuid="a2818568-0737-46e0-94de-93eb8d37baaa"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="455" y="13" width="100" height="20" uuid="c5788b84-1cbb-4658-b659-2350ba0c3f2f"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="33" width="554" height="1" uuid="d1c14b7e-b120-479d-a3b0-6ae554950af9"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="25" width="167" height="10" forecolor="#000000" uuid="fcd15023-ae5e-4865-81fa-9ee21eeb6479"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[www.techtools.ind.br]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="14" width="167" height="10" forecolor="#000000" uuid="f22c2ea3-4ff9-4042-ad3c-3252bd12e824"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Fone/Fax  (47) 3425-1001   Joinville - SC  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="3" width="183" height="10" forecolor="#000000" uuid="c51294d5-6bdd-4579-b254-51bb4e1f7de1"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA["Soluções em Ferramentas para Corte, Dobra e Repuxo "]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement x="18" y="9" width="56" height="20" uuid="fc3f1fc1-f605-4c9b-b893-561bd93b0d78"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="9" width="109" height="20" uuid="ffcc7383-01b7-4584-bd00-b1820832ccc8"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dt. Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="87" y="9" width="107" height="20" uuid="a2d20186-8964-4351-898f-94473e93416e"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="9" width="82" height="20" uuid="06858ff4-8867-47d8-a96b-9956fa7c3868"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Venda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="412" y="9" width="66" height="20" uuid="fe493416-8f59-43e5-8280-7932fca63d7e"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="499" y="9" width="39" height="20" uuid="eb8386ed-8166-424b-b4b6-f33e4dca114e"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="-3" y="0" width="84" height="20" uuid="aad7391c-411c-40bf-afef-d3aa64cb432e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="554" height="1" forecolor="#CFCECE" uuid="a64225b1-94b2-4c3b-ad8d-e256218219c7"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="305" y="0" width="82" height="20" uuid="dbdd4ba8-ba14-4f97-b742-b3e1bfd78b9b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{documentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="87" y="1" width="107" height="20" uuid="5eb8a87a-2e9f-4e8b-ae76-0f02c9e40dae"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{documentNumber}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="201" y="1" width="82" height="20" uuid="c7178221-56da-48e6-b807-bdf2aaa425e0"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{sale}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="400" y="0" width="87" height="20" uuid="6411dd72-8f2e-4b72-ace0-b994a75bb703"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dischargeSituation} == null ? "-" : $F{dischargeSituation}.getLabel()]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="495" y="1" width="49" height="20" uuid="59f052a9-3386-4397-b0c6-6a1c9d69f20a"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{totalValue}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="53" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

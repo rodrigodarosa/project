@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<title>Login</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</h:head>
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<script>
+				function changeTab(index) {
+					tabPanelWidget.select(index);
+				}
+			</script>
+			<p:outputPanel>
+				<h:outputLabel value="Monitoramento" styleClass="title" />
+			</p:outputPanel>
+			<p:separator />
+			<h:outputText value="Abaixo se encontram gráficos de monitaramento da situação atual da empresa." />
+			<p />
+			<br />
+			<p:panel style="width: 920px;">
+			<p:tabView widgetVar="tabPanelWidget" style="height: 470px; border:none" effect="slide">
+				<p:tab title="Orçamento de Entrada">
+					<table style="width: 850px; height: 400px">
+						<tr>
+							<td style="width: 27px"></td>
+							<td style="width: 750px"><p:pieChart sliceMargin="10" id="pieChart2" showDataLabels="true" value="#{inputBudgetBean.pieModel}" title="Orçamentos de Entrada" style="width: 100%; height: 100%" legendCols="10" legendPosition="s" seriesColors="FF3130, 34AADC, FF9500, 5856D6, 4CD964, 8E8E93" /></td>
+							<td style="width: 27px"></td>
+						</tr>
+					</table>
+				</p:tab>
+			</p:tabView>
+			</p:panel>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

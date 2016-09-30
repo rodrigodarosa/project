@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formSales">
+				<p:outputPanel>
+					<h:outputLabel value="Vendas" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+
+				<h:outputText value="Abaixo está a relação das vendas da empresa." />
+				<p />
+				<br />
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{saleBean.filteredSales}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="sale" value="#{saleBean.saleDataModel}" id="sales" editable="false" selection="#{saleBean.entitySelected}" selectionMode="single" rowKey="#{sale.id}">
+
+						<p:ajax event="rowSelect" listener="#{saleBean.onRowSelect}" update=":formEdit:panelEdit :formSales:buttons" />
+						<p:ajax event="rowUnselect" listener="#{saleBean.onRowUnselect}" />
+
+
+						<p:column headerText="ID" style="width:10%" filterMatchMode="contains" filterBy="#{sale.id}">
+							<h:outputText value="#{sale.id}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Descrição" style="width:25%" filterMatchMode="contains" filterBy="#{sale.description}">
+							<h:outputText value="#{sale.description}" style="width:10%" />
+						</p:column>
+
+
+						<p:column headerText="Data da Venda" style="width:15%">
+							<h:outputText value="#{sale.date}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Cliente" style="width:15%" filterMatchMode="contains" filterBy="#{sale.customer.name}">
+							<h:outputText value="#{sale.customer.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Vendedor" style="width:15%" filterMatchMode="contains" filterBy="#{sale.seller.name}">
+							<h:outputText value="#{sale.seller.name}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertSale.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editSale.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{saleBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{saleBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{saleBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{saleBean.remove}" update=":formSales:sales" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog id="modalSale" header="Inserir Venda" widgetVar="insertSale" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:dialog widgetVar="searchEmployeeInsert" id="searchEmployeeInsert" resizable="false" header="Pesquisar Vendedor" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.sellerDataModel}" id="employees" editable="false" selection="#{saleBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:1%" filterMatchMode="contains" filterBy="#{employee.cpf}">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{saleBean.applyEmployee}" ajax="true" update=":formInsert:seller" oncomplete="searchEmployeeInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeInsert.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+
+							<p:dialog widgetVar="searchCustomerInsert" id="searchCustomerInsert" resizable="false" header="Pesquisar Cliente" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="customerSearch" value="#{customerBean.customerDataModel}" id="customers" editable="false" selection="#{saleBean.entitySelectedSearch}" selectionMode="single" rowKey="#{customerSearch.id}">
+
+									<p:column headerText="CNPJ" style="width:15%" filterMatchMode="contains" filterBy="#{providecustomerSearch.cnpj}">
+										<h:outputText value="#{customerSearch.cnpj}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{customerSearch.name}">
+										<h:outputText value="#{customerSearch.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Endereço" style="width:35%" filterMatchMode="contains" filterBy="#{customerSearch.address}">
+										<h:outputText value="#{customerSearch.address}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:35%" filterMatchMode="contains" filterBy="#{customerSearch.telephone}">
+										<h:outputText value="#{customerSearch.telephone}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{saleBean.applyCustomer}" ajax="true" update=":formInsert:customerName" oncomplete="searchCustomerInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchCustomerInsert.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<p:panelGrid columns="2" styleClass="panelNB">
+									<h:outputLabel value="Nome do Cliente:" for="customerName" styleClass="mandatory" />
+									<h:panelGroup>
+										<p:inputText id="customerName" value="#{saleBean.customerName}" disabled="true" styleClass="inputText" />
+										<p:graphicImage id="zoomCustomer" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchCustomerInsert.show()" />
+									</h:panelGroup>
+
+									<h:outputLabel value="Vendedor:" for="seller" styleClass="mandatory" />
+									<h:panelGroup>
+										<p:inputText id="seller" value="#{saleBean.sellerName}" disabled="true" styleClass="inputText" />
+										<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeInsert.show()" />
+									</h:panelGroup>
+
+									<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+									<p:inputTextarea id="description" value="#{saleBean.entity.description}" styleClass="inputTextArea" />
+
+									<h:outputLabel value="Data da Venda:" for="saleDate" styleClass="mandatory" />
+									<p:calendar id="saleDate" value="#{saleBean.entity.date}" showOn="button" styleClass="inputText" />
+								</p:panelGrid>
+								<p:panelGrid columns="2" styleClass="panelNB">
+									<h:outputLabel value="Produtos:" for="products" styleClass="mandatory" />
+									<p:pickList id="products" value="#{saleBean.allManufacturedProducts}" var="product" effect="bounce" itemValue="#{product}" itemLabel="#{product.name}" converter="manufacturedProductConverter" showCheckbox="true" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" requiredMessage="Obrigatório haver Produto(s) na compra.">
+
+										<f:facet name="sourceCaption">Disponíveis</f:facet>
+										<f:facet name="targetCaption">Na compra</f:facet>
+
+
+
+									</p:pickList>
+								</p:panelGrid>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{saleBean.save}" oncomplete="insertSale.hide(); cleanSaleInsert();" ajax="false" />
+						<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{saleBean.save}" update=":formSales:sales panelInsert" />
+						<p:commandButton id="btClose" value="Cancelar" onclick="insertSale.hide()" icon="ui-icon-close" />
+
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+			<p:dialog id="modalSaleEdit" header="Editar Venda" widgetVar="editSale" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:dialog widgetVar="searchEmployeeEdit" id="searchEmployeeEdit" header="Pesquisar Vendedor" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.sellerDataModel}" id="employees" editable="false" selection="#{saleBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:1%" filterMatchMode="contains" filterBy="#{employee.cpf}">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{saleBean.applyEmployee}" ajax="true" update=":formEdit:seller" oncomplete="searchEmployeeEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeEdit.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:dialog widgetVar="searchCustomerEdit" id="searchCustomerEdit" header="Pesquisar Cliente" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="customerSearch" value="#{customerBean.customerDataModel}" id="customers" editable="false" selection="#{saleBean.entitySelectedSearch}" selectionMode="single" rowKey="#{customerSearch.id}">
+
+									<p:column headerText="CNPJ" style="width:15%" filterMatchMode="contains" filterBy="#{providecustomerSearch.cnpj}">
+										<h:outputText value="#{customerSearch.cnpj}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{customerSearch.name}">
+										<h:outputText value="#{customerSearch.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Endereço" style="width:35%" filterMatchMode="contains" filterBy="#{customerSearch.address}">
+										<h:outputText value="#{customerSearch.address}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:35%" filterMatchMode="contains" filterBy="#{customerSearch.telephone}">
+										<h:outputText value="#{customerSearch.telephone}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{saleBean.applyCustomer}" ajax="true" update=":formEdit:customerName" oncomplete="searchCustomerEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchCustomerEdit.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<p:panelGrid columns="2" styleClass="panelNB">
+									<h:outputLabel value="Nome do Cliente:" for="customerName" styleClass="mandatory" />
+									<h:panelGroup>
+										<p:inputText id="customerName" value="#{saleBean.customerName}" disabled="true" styleClass="inputText" />
+										<p:graphicImage id="zoom" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchCustomerEdit.show()" />
+									</h:panelGroup>
+
+									<h:outputLabel value="Vendedor:" for="seller" styleClass="mandatory" />
+									<h:panelGroup>
+										<p:inputText id="seller" value="#{saleBean.sellerName}" disabled="true" styleClass="inputText" />
+										<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeEdit.show()" />
+									</h:panelGroup>
+
+									<h:outputLabel value="Descrição:" for="descriptionUpdate" styleClass="mandatory" />
+									<p:inputTextarea id="descriptionUpdate" value="#{saleBean.entitySelected.description}" styleClass="inputTextArea" />
+
+									<h:outputLabel value="Data da Venda:" for="date" styleClass="mandatory" />
+									<p:calendar id="date" value="#{saleBean.entitySelected.date}" showOn="button" styleClass="inputText" />
+								</p:panelGrid>
+								<p:panelGrid columns="2" styleClass="panelNB">
+									<h:outputLabel value="Produtos:" for="products" styleClass="mandatory" />
+									<p:pickList id="products" value="#{saleBean.allManufacturedProducts}" var="product" effect="bounce" itemValue="#{product}" itemLabel="#{product.name}" converter="manufacturedProductConverter" showCheckbox="true" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" requiredMessage="Obrigatório haver Produto(s) na compra.">
+
+										<f:facet name="sourceCaption">Disponíveis</f:facet>
+										<f:facet name="targetCaption">Na compra</f:facet>
+
+
+
+									</p:pickList>
+								</p:panelGrid>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btUpdate" value="Salvar" icon="ui-icon-check" action="#{saleBean.update}" oncomplete="editSale.hide()" update=":formSales:sales" />
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{saleBean.extractInformation}" ajax="false"/>
+							<p:commandButton id="btClose" value="Cancelar" onclick="editSale.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

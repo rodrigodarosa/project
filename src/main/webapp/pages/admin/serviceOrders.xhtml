@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formServiceOrders">
+				<p:outputPanel>
+					<h:outputLabel value="Ordens de Serviço" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+
+				<h:outputText value="Abaixo está a relação das ordens de serviço da empresa." />
+				<p />
+				<br />
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{serviceOrderBean.filteredServiceOrders}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="serviceOrder" value="#{serviceOrderBean.serviceOrderDataModel}" id="serviceOrders" editable="false" selection="#{serviceOrderBean.entitySelected}" selectionMode="single" rowKey="#{serviceOrder.id}">
+
+						<p:ajax event="rowSelect" listener="#{serviceOrderBean.onRowSelect}" update=":formEdit:panelEdit :formServiceOrders:buttons" />
+						<p:ajax event="rowUnselect" listener="#{serviceOrderBean.onRowUnselect}" />
+
+
+						<p:column headerText="ID" style="width:10%" filterMatchMode="contains" filterBy="#{serviceOrder.id}" filterStyle="width:80%">
+							<h:outputText value="#{serviceOrder.id}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Descrição" style="width:20%" filterMatchMode="contains" filterBy="#{serviceOrder.description}">
+							<h:outputText value="#{serviceOrder.description}" style="width:10%" filterStyle="width:80%"/>
+						</p:column>
+
+						<p:column headerText="Situação" style="width:15%" filterMatchMode="exact" filterBy="#{serviceOrder.situation}" filterOptions="#{serviceOrderBean.serviceOrderSituationOptions}">
+							<h:outputText value="#{serviceOrder.situation.label}" style="width:10%" filterStyle="width:80%"/>
+						</p:column>
+
+						<p:column headerText="Funcionário" style="width:15%" filterMatchMode="contains" filterBy="#{serviceOrder.employee.name}">
+							<h:outputText value="#{serviceOrder.employee.name}" style="width:10%" filterStyle="width:80%"/>
+						</p:column>
+
+						<p:column headerText="Data de Início" style="width:20%" >
+							<h:outputText value="#{serviceOrder.startDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Data de Término" style="width:20%" >
+							<h:outputText value="#{serviceOrder.endDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Andamento">
+							<p:progressBar value="#{serviceOrder.walkThrough}" labelTemplate="{value}%"/>
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertServiceOrder.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editServiceOrder.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{serviceOrderBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{serviceOrderBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{serviceOrderBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{serviceOrderBean.remove}" update=":formServiceOrders:serviceOrders" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog id="modalServiceOrder" header="Inserir Ordem de Serviço" widgetVar="insertServiceOrder" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+
+							<p:dialog widgetVar="searchManufacturedProductInsert" id="searchManufacturedProductInsert" header="Pesquisar Produto Manufaturado" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="manufacturedProduct" value="#{manufacturedProductBean.manufacturedProductDataModel}" id="manufacturedProducts" editable="false" selection="#{serviceOrderBean.entitySelectedSearch3}" selectionMode="single" rowKey="#{manufacturedProduct.id}">
+
+									<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{manufacturedProduct.id}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{manufacturedProduct.name}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Descricao" style="width:30%" filterMatchMode="contains" filterBy="#{manufacturedProduct.description}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Situation" style="width:15%" filterMatchMode="exact" filterBy="#{manufacturedProduct.situation}" filterOptions="#{manufacturedProductBean.manufacturedProductsSituationOptions}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.situation.label}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyManufacturedProduct}" ajax="true" update=":formInsert:manufacturedProduct" oncomplete="searchManufacturedProductInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchManufacturedProductInsert.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:dialog widgetVar="searchEmployeeInsert" id="searchEmployeeInsert" header="Pesquisar Operador" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.operatorDataModel}" id="employees" editable="false" selection="#{serviceOrderBean.entitySelectedSearch}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:35%" filterMatchMode="contains" filterBy="#{employee.cpf}" filterStyle="width:80%">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}" filterStyle="width:80%">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}" filterStyle="width:80%">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}" filterStyle="width:80%">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyEmployee}" ajax="true" update=":formInsert:employee" oncomplete="searchEmployeeInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeInsert.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+
+							<p:dialog resizableColumns="false" widgetVar="searchMachineInsert" id="searchMachineInsert" header="Pesquisar Máquina" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="machine" value="#{machineBean.machineDataModel}" id="machines" editable="false" selection="#{serviceOrderBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{machine.id}">
+
+									<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{machine.id}" filterStyle="width:80%">
+										<h:outputText value="#{machine.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{machine.name}" filterStyle="width:80%">
+										<h:outputText value="#{machine.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Fabricante" style="width:20%" filterMatchMode="contains" filterBy="#{machine.produces}" filterStyle="width:80%">
+										<h:outputText value="#{machine.producer}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Situação" style="width:35%" filterMatchMode="exact" filterBy="#{machine.situation}" filterOptions="#{machineBean.machinesSituationOptions}" filterStyle="width:80%">
+										<h:outputText value="#{machine.situation.label}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyMachine}" ajax="true" update=":formInsert:machine" oncomplete="searchMachineInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchMachineInsert.hide()" />
+								</p:panel>
+							</p:dialog>
+
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Funcionário:" for="employee" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="employee" value="#{serviceOrderBean.employeeName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Máquina:" for="machine" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="machine" value="#{serviceOrderBean.machineName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomMachine" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchMachineInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Produto Manufaturado:" for="manufacturedProduct" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="manufacturedProduct" value="#{serviceOrderBean.manufacturedProductName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomManufacturedProduct" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchManufacturedProductInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputText id="description" value="#{serviceOrderBean.entity.description}" styleClass="inputText" />
+
+								<h:outputLabel value="Situação:" for="situation" styleClass="mandatory" />
+								<p:selectOneMenu id="situation" value="#{serviceOrderBean.entity.situation}" styleClass="inputText">
+									<f:selectItems value="#{serviceOrderBean.serviceOrderSituationOptions}" />
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Data de Início:" for="startDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" locale="pt" id="startDate" value="#{serviceOrderBean.entity.startDate}" showOn="button" styleClass="inputText" />
+
+								<h:outputLabel value="Data de Término:" for="endDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" locale="pt" id="endDate" value="#{serviceOrderBean.entity.endDate}" showOn="button" styleClass="inputText" />
+
+								<h:outputText value="Percentual de completude:" />
+								<p:spinner id="minmax" suffix="%" value="#{serviceOrderBean.entity.walkThrough}" min="0" max="100" />
+
+
+								<h:outputLabel value="Anexo Atual:" rendered="#{serviceOrderBean.entity.fileName != null}" id="atualLabelInsert" />
+								<h:commandLink value="#{serviceOrderBean.entity.fileName}" rendered="#{serviceOrderBean.entity.fileName != null}" id="atualLinkInsert">
+									<p:fileDownload value="#{serviceOrderBean.file}" />
+								</h:commandLink>
+
+								<h:outputLabel value="Anexo:" for="anexo" />
+								<p:fileUpload fileLimit="1" fileLimitMessage="O Máximo de arquivos para upload é 1 arquivo!" label="Escolher.." id="anexo" mode="advanced" fileUploadListener="#{serviceOrderBean.upload}" auto="true" update="atualLabelInsert atualLinkInsert" />
+
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{serviceOrderBean.save}" oncomplete="insertServiceOrder.hide(); cleanServiceOrderInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{serviceOrderBean.save}" update=":formServiceOrders:serviceOrders panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertServiceOrder.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalServiceOrderEdit" header="Editar Ordem de Serviço" widgetVar="editServiceOrder" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:dialog widgetVar="searchManufacturedProductEdit" id="searchManufacturedProductEdit" header="Pesquisar Produto Manufaturado" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="manufacturedProduct" value="#{manufacturedProductBean.manufacturedProductDataModel}" id="manufacturedProducts" editable="false" selection="#{serviceOrderBean.entitySelectedSearch3}" selectionMode="single" rowKey="#{manufacturedProduct.id}">
+
+									<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{manufacturedProduct.id}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{manufacturedProduct.name}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Descricao" style="width:30%" filterMatchMode="contains" filterBy="#{manufacturedProduct.description}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Situation" style="width:15%" filterMatchMode="exact" filterBy="#{manufacturedProduct.situation}" filterOptions="#{manufacturedProductBean.manufacturedProductsSituationOptions}" filterStyle="width:80%">
+										<h:outputText value="#{manufacturedProduct.situation.label}" style="width:10%" />
+									</p:column>
+
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyManufacturedProduct}" ajax="true" update=":formEdit:manufacturedProduct" oncomplete="searchManufacturedProductEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchManufacturedProductEdit.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:dialog  widgetVar="searchEmployeeEdit" id="searchEmployeeEdit" header="Pesquisar Operador" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.operatorDataModel}" id="employees" editable="false" selection="#{serviceOrderBean.entitySelectedSearch}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:35%" filterMatchMode="contains" filterBy="#{employee.cpf}" filterStyle="width:80%">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}" filterStyle="width:80%">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}" filterStyle="width:80%">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}" filterStyle="width:80%">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyEmployee}" ajax="true" update=":formEdit:employee" oncomplete="searchEmployeeEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeEdit.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:dialog widgetVar="searchMachineEdit" id="searchMachineEdit" header="Pesquisar  Máquina" width="50%">
+								<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="machine" value="#{machineBean.machineDataModel}" id="machines" editable="false" selection="#{serviceOrderBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{machine.id}">
+
+									<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{machine.id}" filterStyle="width:80%">
+										<h:outputText value="#{machine.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{machine.name}" filterStyle="width:80%">
+										<h:outputText value="#{machine.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Fabricante" style="width:20%" filterMatchMode="contains" filterBy="#{machine.produces}" filterStyle="width:80%">
+										<h:outputText value="#{machine.producer}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Situação" style="width:35%" filterMatchMode="exact" filterBy="#{machine.situation}" filterOptions="#{machineBean.machinesSituationOptions}" filterStyle="width:80%">
+										<h:outputText value="#{machine.situation.label}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{serviceOrderBean.applyMachine}" ajax="true" update=":formEdit:machine" oncomplete="searchMachineEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchMachineEdit.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Funcionário:" for="employee" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="employee" value="#{serviceOrderBean.employeeName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Máquina:" for="machine" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="machine" value="#{serviceOrderBean.machineName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomMachine" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchMachineEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Produto Manufaturado:" for="manufacturedProduct" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="manufacturedProduct" value="#{serviceOrderBean.manufacturedProductName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomManufacturedProduct" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchManufacturedProductEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Descrição:" for="descriptionUpdate" styleClass="mandatory" />
+								<p:inputText id="descriptionUpdate" value="#{serviceOrderBean.entitySelected.description}" styleClass="inputText" />
+
+								<h:outputLabel value="Situação:" for="situationUpdate" styleClass="mandatory" />
+								<p:selectOneMenu id="situationUpdate" value="#{serviceOrderBean.entitySelected.situation}" styleClass="inputText">
+									<f:selectItems value="#{serviceOrderBean.serviceOrderSituationOptions}" />
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Data de Início:" for="startDateUpdate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" locale="pt" id="startDateUpdate" value="#{serviceOrderBean.entitySelected.startDate}" showOn="button" styleClass="inputText" />
+
+								<h:outputLabel value="Data de Término:" for="endDateUpdate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" locale="pt" id="endDateUpdate" value="#{serviceOrderBean.entitySelected.endDate}" showOn="button" styleClass="inputText" />
+
+								<h:outputText value="Percentual de completude:" />
+								<p:spinner id="minmax" suffix="%" value="#{serviceOrderBean.entitySelected.walkThrough}" min="0" max="100" />
+
+
+								<h:outputLabel value="Anexo Atual:" rendered="#{serviceOrderBean.entitySelected.fileName != null}" id="atualLabel" />
+								<h:commandLink value="#{serviceOrderBean.entitySelected.fileName}" rendered="#{serviceOrderBean.entitySelected.fileName != null}" id="atualLink">
+									<p:fileDownload value="#{serviceOrderBean.file}" />
+								</h:commandLink>
+
+								<h:outputLabel value="Anexo:" for="anexo" />
+								<p:fileUpload fileLimit="1" fileLimitMessage="O Máximo de arquivos para upload é 1 arquivo!" label="Escolher.." id="anexo" mode="advanced" fileUploadListener="#{serviceOrderBean.upload}" auto="true" update="atualLabel atualLink" />
+
+							</p:panelGrid>
+							<br />
+						</div>
+							<p:fieldset legend="Apontamentos">
+							<h:outputLabel value="Clique " /><p:commandLink action="#{serviceOrderBean.extractReportNotationsByServiceOrder}" value="Aqui" ajax="false"/><h:outputLabel value=" para fazer download do relatório de apontamentos desta Ordem de Serviço." />
+							
+							</p:fieldset>
+					</p:panel>
+					<br />
+					<p:panel>
+					<div align="center">
+						<p:commandButton id="btUpdate" value="Salvar" icon="ui-icon-check" action="#{serviceOrderBean.update}" oncomplete="editServiceOrder.hide()" update=":formServiceOrders:serviceOrders" />
+						<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{serviceOrderBean.extractInformation}" ajax="false" />
+						<p:commandButton id="btClose" value="Cancelar" onclick="editServiceOrder.hide()" icon="ui-icon-close" />
+					</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/templateCustomer.xhtml">
+		<ui:define name="content">
+			<h:form id="formDesktop" style="width: 90%">
+				<p:outputPanel>
+					<h:outputLabel value="Área do Cliente" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos seus orçamentos." />
+				<p />
+				<br />
+				<p:accordionPanel id="acordeon">
+
+					<p:tab title="Pendentes" titletip="Orçamentos pendentes">
+						<p:dataTable  emptyMessage="Não há registros a serem apresentados." filteredValue="#{inputBudgetBean.filteredInputBudgets}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="inputBudget" value="#{inputBudgetBean.inputBudgetPendingDataModel}" id="inputBudgets" editable="false" selection="#{inputBudgetBean.entitySelected}" selectionMode="single" rowKey="#{inputBudget.id}">
+
+							<p:ajax event="rowSelect" listener="#{inputBudgetBean.onRowSelect}" update=":formDesktop:buttons :formEdit:panelEdit" />
+							<p:ajax event="rowUnselect" listener="#{inputBudgetBean.onRowUnselect}" />
+
+							<p:column headerText="Descrição" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.description}">
+								<h:outputText value="#{inputBudget.description}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Cliente" style="width:15%">
+								<h:outputText value="#{inputBudget.customer.name}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Especificação Técnica" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.technicalSpecification}">
+								<h:outputText value="#{inputBudget.technicalSpecification}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Data de Entrega" style="width:15%">
+								<h:outputText value="#{inputBudget.deliveryDate}" style="width:10%" filterMatchMode="exact" filterBy="#{inputBudget.deliveryDate}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Quantidade" style="width:15%">
+								<h:outputText value="#{inputBudget.quantity}" style="width:10%" />
+							</p:column>
+
+						</p:dataTable>
+
+						<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+							<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{inputBudgetBean.remove}" update=":formDesktop:acordeon:inputBudgets" />
+							<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+					</p:tab>
+					<p:tab title="Deferidos" titletip="Orçamentos Deferidos">
+						<p:dataTable  emptyMessage="Não há registros a serem apresentados." filteredValue="#{inputBudgetBean.filteredInputBudgets}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="inputBudget" value="#{inputBudgetBean.inputBudgetAcceptedDataModel}" id="inputBudgetsAccepteds" editable="false" selection="#{inputBudgetBean.entitySelected}" selectionMode="single" rowKey="#{inputBudget.id}">
+
+							<p:ajax event="rowSelect" listener="#{inputBudgetBean.onRowSelect}" update=":formDesktop:buttons :formEdit:panelEdit" />
+							<p:ajax event="rowUnselect" listener="#{inputBudgetBean.onRowUnselect}" />
+
+							<p:column headerText="Descrição" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.description}">
+								<h:outputText value="#{inputBudget.description}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Cliente" style="width:15%" >
+								<h:outputText value="#{inputBudget.customer.name}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Especificação Técnica" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.technicalSpecification}">
+								<h:outputText value="#{inputBudget.technicalSpecification}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Data de Entrega" style="width:15%">
+								<h:outputText value="#{inputBudget.deliveryDate}" style="width:10%" filterMatchMode="exact" filterBy="#{inputBudget.deliveryDate}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Quantidade" style="width:15%">
+								<h:outputText value="#{inputBudget.quantity}" style="width:10%" />
+							</p:column>
+
+						</p:dataTable>
+					</p:tab>
+					<p:tab title="Indeferidos" titletip="Orçamentos Indeferidos">
+						<p:dataTable  emptyMessage="Não há registros a serem apresentados." filteredValue="#{inputBudgetBean.filteredInputBudgets}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="inputBudget" value="#{inputBudgetBean.inputBudgetNotAcceptedDataModel}" id="inputBudgetsNotAccepteds" editable="false" selection="#{inputBudgetBean.entitySelected}" selectionMode="single" rowKey="#{inputBudget.id}">
+
+							<p:ajax event="rowSelect" listener="#{inputBudgetBean.onRowSelect}" update=":formDesktop:buttons :formEdit:panelEdit" />
+							<p:ajax event="rowUnselect" listener="#{inputBudgetBean.onRowUnselect}" />
+
+							<p:column headerText="Descrição" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.description}">
+								<h:outputText value="#{inputBudget.description}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Cliente" style="width:15%" >
+								<h:outputText value="#{inputBudget.customer.name}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Especificação Técnica" style="width:15%" filterMatchMode="contains" filterBy="#{inputBudget.technicalSpecification}">
+								<h:outputText value="#{inputBudget.technicalSpecification}" style="width:10%" />
+							</p:column>
+
+							<p:column headerText="Data de Entrega" style="width:15%">
+								<h:outputText value="#{inputBudget.deliveryDate}" style="width:10%" filterMatchMode="exact" filterBy="#{inputBudget.deliveryDate}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Quantidade" style="width:15%">
+								<h:outputText value="#{inputBudget.quantity}" style="width:10%" />
+							</p:column>
+
+						</p:dataTable>
+					</p:tab>
+				</p:accordionPanel>
+				<p />
+				<p:panel id="buttons">
+					<p:panelGrid columns="2" styleClass="panelNB">
+						<h:panelGroup>
+							<p:commandButton id="btIncluir" value="Incluir" onclick="insertInputBudget.show()" type="button" icon="ui-icon-plus" />
+							<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editInputBudget.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{inputBudgetBean.entitySelected.id==null}" />
+							<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{inputBudgetBean.entitySelected.id==null}">
+								<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{inputBudgetBean.extractReport}" ajax="false" />
+						</h:panelGroup>
+					</p:panelGrid>
+				</p:panel>
+			</h:form>
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{inputBudgetBean.remove}" update=":formDesktop:acordeon:inputBudgets" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<p:dialog id="modalInputBudget" header="Inserir Orçamento" widgetVar="insertInputBudget" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputText id="description" value="#{inputBudgetBean.entity.description}" />
+
+								<h:outputLabel value="Especificação Técnica:" for="technicalSpecification" styleClass="mandatory" />
+								<p:inputTextarea id="technicalSpecification" value="#{inputBudgetBean.entity.technicalSpecification}" />
+
+								<h:outputLabel value="Data de Entrega:" for="deliveryDate" styleClass="mandatory" />
+								<p:calendar id="deliveryDate" value="#{inputBudgetBean.entity.deliveryDate}" showOn="button" />
+
+								<h:outputLabel value="Quantidade:" for="quantity" styleClass="mandatory" />
+								<p:inputText id="quantity" value="#{inputBudgetBean.entity.quantity}" size="5" />
+
+								<h:outputLabel value="Anexo Atual:" rendered="#{inputBudgetBean.entity.fileName != null}" id="atualLabelInsert" />
+								<h:commandLink value="#{inputBudgetBean.entity.fileName}" rendered="#{inputBudgetBean.entity.fileName != null}" id="atualLinkInsert">
+									<p:fileDownload value="#{inputBudgetBean.file}" />
+								</h:commandLink>
+
+								<h:outputLabel value="Anexo:" for="anexo" />
+								<p:fileUpload fileLimit="1" fileLimitMessage="O Máximo de arquivos para upload é 1 arquivo!" label="Escolher.." id="anexo" mode="advanced" fileUploadListener="#{inputBudgetBean.upload}" auto="true" update="atualLabelInsert atualLinkInsert" />
+
+
+							</p:panelGrid>
+
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{inputBudgetBean.save}" oncomplete="insertInputBudget.hide(); cleanInputBudgetInsert();" update=":formDesktop:acordeon:inputBudgets" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{inputBudgetBean.save}" update=":formDesktop:acordeon:inputBudgets panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertInputBudget.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalInputBudgetEdit" header="Editar Orçamento" widgetVar="editInputBudget" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputText id="description" value="#{inputBudgetBean.entitySelected.description}" />
+
+								<h:outputLabel value="Especificação Técnica:" for="technicalSpecification" styleClass="mandatory" />
+								<p:inputTextarea id="technicalSpecification" value="#{inputBudgetBean.entitySelected.technicalSpecification}" />
+
+								<h:outputLabel value="Data de Entrega:" for="deliveryDate" styleClass="mandatory" />
+								<p:calendar id="deliveryDate" value="#{inputBudgetBean.entitySelected.deliveryDate}" showOn="button" />
+
+								<h:outputLabel value="Quantidade:" for="quantity" styleClass="mandatory" />
+								<p:inputText id="quantity" value="#{inputBudgetBean.entitySelected.quantity}" size="5" />
+
+								<h:outputLabel value="Situação:" for="situation" styleClass="mandatory" />
+								<h:outputText id="situation" value="#{inputBudgetBean.entitySelected.situation.label}" />
+
+								<h:outputLabel value="Anexo Atual:" rendered="#{inputBudgetBean.entitySelected.fileName != null}" id="atualLabelEdit" />
+								<h:commandLink value="#{inputBudgetBean.entitySelected.fileName}" rendered="#{inputBudgetBean.entitySelected.fileName != null}" id="atualLinkEdit">
+									<p:fileDownload value="#{inputBudgetBean.file}" />
+								</h:commandLink>
+
+								<h:outputLabel value="Anexo:" for="anexo" />
+								<p:fileUpload fileLimit="1" fileLimitMessage="O Máximo de arquivos para upload é 1 arquivo!" label="Escolher.." id="anexo" mode="advanced" fileUploadListener="#{inputBudgetBean.upload}" auto="true" update="atualLabelEdit atualLinkEdit" />
+
+
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+
+					<br />
+
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{inputBudgetBean.update}" oncomplete="editInputBudget.hide()" ajax="false" />
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="editInputBudget.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

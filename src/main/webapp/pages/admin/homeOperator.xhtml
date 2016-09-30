@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formDesktop">
+				<p:outputPanel>
+					<h:outputLabel value="Área de Trabalho" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação das suas ordens de serviço." />
+				<p />
+				<br />
+				<p:panel>
+					<p:panel id="panelExecuting">
+						<h:outputLabel value="Executando Neste Momento" styleClass="mandatory" style="font-size:15px" />
+						<p:separator />
+						<p:panelGrid id="executing" columns="7" styleClass="panelNB" rendered="#{serviceOrderBean.actuallyExecuting != null}" style="width:100%">
+							<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/loading.gif" style="width:30px" />
+							<h:outputText value="#{serviceOrderBean.actuallyExecuting.id} - #{serviceOrderBean.actuallyExecuting.description}" />
+							<h:panelGroup>
+								<h:outputText value="Estimado de " />
+								<h:outputText value="#{serviceOrderBean.actuallyExecuting.startDate}" style="font-weight:bold">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+								</h:outputText>
+								<h:outputText value=" à " />
+								<h:outputText value="#{serviceOrderBean.actuallyExecuting.endDate}" style="font-weight:bold">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+								</h:outputText>
+							</h:panelGroup>
+							<p:commandLink onclick="pauseDialog.show()">
+								<p:graphicImage id="pausar" value="#{facesContext.externalContext.requestContextPath}/../images/pauseicone.png" style="width:25px" />
+								<p:tooltip for="pausar" showEffect="fade" hideEffect="fade" value="Pausar Ordem de Serviço." />
+							</p:commandLink>
+							<p:commandLink onclick="serviceOrderDialog.show()" update="panelDialog">
+								<p:graphicImage id="visualizar" value="#{facesContext.externalContext.requestContextPath}/../images/visualizaricone.png" style="width:25px" />
+								<p:tooltip for="visualizar" showEffect="fade" hideEffect="fade" value="Visualizar informações da Ordem de Serviço" />
+								<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrderBean.actuallyExecuting}" />
+							</p:commandLink>
+							<p:commandLink onclick="finishDialog.show()">
+								<p:graphicImage id="finalizar" value="#{facesContext.externalContext.requestContextPath}/../images/finalizaricone.png" style="width:25px" />
+								<p:tooltip for="finalizar" showEffect="fade" hideEffect="fade" value="Finalizar esta Ordem de Serviço" />
+							</p:commandLink>
+							<p:commandLink action="#{serviceOrderBean.extractInformation}" ajax="false">
+								<p:graphicImage id="printRunning" value="#{facesContext.externalContext.requestContextPath}/../images/print.png" style="width:25px" />
+								<p:tooltip for="printRunning" showEffect="fade" hideEffect="fade" value="Imprimir Ordem de Serviço" />
+								<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrderBean.actuallyExecuting}" />
+							</p:commandLink>
+						</p:panelGrid>
+						<h:outputText value="Não há ordem de serviço sendo executada no momento." rendered="#{serviceOrderBean.actuallyExecuting == null}" />
+					</p:panel>
+
+					<br />
+					<p />
+					<p:dataTable paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" id="serviceOrders" value="#{serviceOrderBean.allByEmployee}" var="serviceOrder" emptyMessage="Não há Ordens de Serviços planejados para você.">
+
+						<p:column style="width:3%" headerText="Situação">
+							<h:panelGroup rendered="#{serviceOrder.situation=='NOT_INITIATED'}">
+								<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pending.png" style="width:30px" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{serviceOrder.situation=='STAND_BY'}">
+								<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pause.png" style="width:30px" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{serviceOrder.situation=='FINALIZED'}">
+								<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/running.png" style="width:30px" />
+							</h:panelGroup>
+						</p:column>
+						<p:column headerText="Descrição da Ordem de Serviço">
+							<h:outputText value="#{serviceOrder.id} - #{serviceOrder.description}" />
+						</p:column>
+						<p:column headerText="Data de Início Previsto">
+							<h:outputText value="#{serviceOrder.startDate}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Data de Término Previsto">
+							<h:outputText value="#{serviceOrder.endDate}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Andamento">
+							<p:progressBar value="#{serviceOrder.walkThrough}" labelTemplate="{value}%" />
+						</p:column>
+						<p:column headerText="Opções">
+							<h:panelGroup rendered="#{serviceOrder.situation=='FINALIZED'}">
+								<p:panelGrid columns="3" styleClass="panelNB" style="width:90px">
+									<p:commandLink onclick="serviceOrderDialog.show()" update=":formDesktop:panelDialog">
+										<p:graphicImage id="visualizar2" value="#{facesContext.externalContext.requestContextPath}/../images/visualizaricone.png" style="width:13px" />
+										<p:tooltip for="visualizar2" showEffect="fade" hideEffect="fade" value="Visualizar informações da Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<p:commandLink action="#{serviceOrderBean.extractInformation}" ajax="false">
+										<p:graphicImage id="print" value="#{facesContext.externalContext.requestContextPath}/../images/print.png" style="width:13px" />
+										<p:tooltip for="print" showEffect="fade" hideEffect="fade" value="Imprimir Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<h:panelGroup />
+								</p:panelGrid>
+							</h:panelGroup>
+
+							<h:panelGroup rendered="#{serviceOrder.situation=='NOT_INITIATED'}">
+								<p:panelGrid columns="3" styleClass="panelNB" style="width:90px">
+									<p:commandLink onclick="serviceOrderDialog.show()" update=":formDesktop:panelDialog">
+										<p:graphicImage id="visualizar3" value="#{facesContext.externalContext.requestContextPath}/../images/visualizaricone.png" style="width:13px" />
+										<p:tooltip for="visualizar3" showEffect="fade" hideEffect="fade" value="Visualizar informações da Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<p:commandLink action="#{serviceOrderBean.extractInformation}" ajax="false">
+										<p:graphicImage id="print1" value="#{facesContext.externalContext.requestContextPath}/../images/print.png" style="width:13px" />
+										<p:tooltip for="print1" showEffect="fade" hideEffect="fade" value="Imprimir Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<p:commandLink action="#{serviceOrderBean.startOrResumeServiceOrder}" update="serviceOrders :formDesktop:executing" ajax="false">
+
+										<p:graphicImage id="iniciar" value="#{facesContext.externalContext.requestContextPath}/../images/iniciaricone.png" style="width:13px" />
+										<p:tooltip for="iniciar" showEffect="fade" hideEffect="fade" value="Iniciar Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+								</p:panelGrid>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{serviceOrder.situation=='STAND_BY'}">
+								<p:panelGrid columns="3" styleClass="panelNB" style="width:90px">
+									<p:commandLink onclick="serviceOrderDialog.show()" update=":formDesktop:panelDialog">
+										<p:graphicImage id="visualizar4" value="#{facesContext.externalContext.requestContextPath}/../images/visualizaricone.png" style="width:13px" />
+										<p:tooltip for="visualizar4" showEffect="fade" hideEffect="fade" value="Visualizar informações da Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<p:commandLink action="#{serviceOrderBean.extractInformation}" ajax="false">
+										<p:graphicImage id="print2" value="#{facesContext.externalContext.requestContextPath}/../images/print.png" style="width:13px" />
+										<p:tooltip for="print2" showEffect="fade" hideEffect="fade" value="Imprimir Ordem de Serviço" />
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+									</p:commandLink>
+									<p:commandLink action="#{serviceOrderBean.startOrResumeServiceOrder}" update="serviceOrders :formDesktop:executing" ajax="false">
+										<f:setPropertyActionListener target="#{serviceOrderBean.entitySelected}" value="#{serviceOrder}" />
+										<p:graphicImage id="retomar" value="#{facesContext.externalContext.requestContextPath}/../images/retomaricone.png" style="width:13px" />
+										<p:tooltip for="retomar" showEffect="fade" hideEffect="fade" value="Retomar Ordem de Serviço" />
+									</p:commandLink>
+								</p:panelGrid>
+							</h:panelGroup>
+						</p:column>
+					</p:dataTable>
+					<p />
+					<p:panel>
+						<p:panelGrid columns="7" styleClass="panelNB">
+							<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pending.png" style="width:15px" />
+							<h:outputText value="Pendente" />
+							<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pause.png" style="width:15px" />
+							<h:outputText value="Pausada" />
+							<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/running.png" style="width:15px" />
+							<h:outputText value="Finalizada" />
+
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{serviceOrderBean.extractReportAllEmployee}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+
+					</p:panel>
+				</p:panel>
+
+				<p:dialog modal="true" appendTo="@(body)" showEffect="clip" hideEffect="clip" resizable="false" id="serviceOrderView" widgetVar="serviceOrderDialog" header="Visualizar Informações" closable="true">
+
+					<p:panelGrid columns="2" styleClass="panelNB" id="panelDialog">
+						<h:outputLabel value="Funcionário:" for="employee" styleClass="mandatory" />
+						<p:outputLabel id="employee" value="#{serviceOrderBean.entitySelected.employee.name}" disabled="true" />
+
+						<h:outputLabel value="Máquina:" for="machine" styleClass="mandatory" />
+						<p:outputLabel id="machine" value="#{serviceOrderBean.entitySelected.machine.name}" disabled="true" />
+
+						<h:outputLabel value="Descrição:" for="descriptionUpdate" styleClass="mandatory" />
+						<p:outputLabel id="descriptionUpdate" value="#{serviceOrderBean.entitySelected.description}" disabled="true" />
+
+						<h:outputLabel value="Situação:" for="situationUpdate" styleClass="mandatory" />
+						<p:outputLabel id="situationUpdate" value="#{serviceOrderBean.entitySelected.situation.label}" disabled="true" />
+
+
+						<h:outputLabel value="Data de Início:" for="startDateUpdate" styleClass="mandatory" />
+						<p:outputLabel id="startDateUpdate" value="#{serviceOrderBean.entitySelected.startDate}" disabled="true">
+							<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+						</p:outputLabel>
+
+						<h:outputLabel value="Data de Término:" for="endDateUpdate" styleClass="mandatory" />
+						<p:outputLabel id="endDateUpdate" value="#{serviceOrderBean.entitySelected.endDate}" disabled="true">
+							<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm" />
+						</p:outputLabel>
+
+						<h:outputLabel value="Anexo:" rendered="#{serviceOrderBean.entitySelected.fileName != null}" id="atualLabelInsert" styleClass="mandatory" />
+						<h:commandLink value="#{serviceOrderBean.entitySelected.fileName}" rendered="#{serviceOrderBean.entitySelected.fileName != null}" id="atualLinkInsert">
+							<p:fileDownload value="#{serviceOrderBean.file}" />
+						</h:commandLink>
+					</p:panelGrid>
+
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btClose" value="Fechar" onclick="serviceOrderDialog.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</p:dialog>
+			</h:form>
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" update=":formDesktop:panelExecuting :formDesktop:serviceOrders" icon="ui-icon-check" oncomplete="finishDialog.hide()" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<p:dialog id="reasonWindow" hideEffect="clip" showEffect="clip" dynamic="true" widgetVar="finishDialog" appendTo="@(body)" header="Observação" resizable="false" closable="true">
+				<h:form>
+					<p:panel>
+						<p:panelGrid columns="1" styleClass="panelNB">
+							<h:outputText value="Descreva uma observação" />
+							<p:inputTextarea id="reason" rows="7" cols="70" value="#{serviceOrderBean.observationNotation}" />
+						</p:panelGrid>
+					</p:panel>
+					<p />
+					<p:panel styleClass="panelNB">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<p:commandButton value="OK" update=":formDesktop:panelExecuting :formDesktop:serviceOrders" icon="ui-icon-check" oncomplete="finishDialog.hide()" action="#{serviceOrderBean.finishServiceOrder}" />
+								<p:commandButton value="Cancelar" onclick="finishDialog.hide()" ajax="true" icon="ui-icon-close" />
+							</p:panelGrid>
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="reasonWindow2" hideEffect="clip" showEffect="clip" dynamic="true" widgetVar="pauseDialog" appendTo="@(body)" header="Observação" resizable="false" closable="true">
+				<h:form id="formReason">
+					<p:panel>
+						<p:panelGrid columns="1" styleClass="panelNB">
+							<h:outputText value="Motivo da Pausa:" />
+							<p:selectOneMenu id="pauseReason" value="#{serviceOrderBean.pauseReason}">
+								<f:selectItems value="#{notationBean.pauseReasonOptions}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Descreva uma observação:" />
+							<p:inputTextarea id="reason" rows="7" cols="70" value="#{serviceOrderBean.observationNotation}" />
+
+							<h:outputText value="Percentual de completude:" />
+							<p:spinner id="minmax" suffix="%" value="#{serviceOrderBean.walkThrough}" size="5" min="0" max="99" />
+						</p:panelGrid>
+					</p:panel>
+					<p />
+					<p:panel styleClass="panelNB">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<p:commandButton value="OK" update=":formDesktop:panelExecuting :formDesktop:serviceOrders" icon="ui-icon-check" oncomplete="pauseDialog.hide()" action="#{serviceOrderBean.pauseServiceOrder}" onclick="cleanPauseReason()"/>
+								<p:commandButton value="Cancelar" onclick="pauseDialog.hide()" ajax="true" icon="ui-icon-close" />
+							</p:panelGrid>
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

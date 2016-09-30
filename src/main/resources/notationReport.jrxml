@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employeeReport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b87ba828-1248-4922-9867-c8933b17f1bd">
+	<property name="ireport.zoom" value="1.3995221406292067"/>
+	<property name="ireport.x" value="29"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Wed Mar 26 12:33:26 BRT 2014"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="ec8258d9-876c-4881-96a7-b569e7ea4d9a"/>
+	<subDataset name="Table Dataset 2" uuid="315a8b5d-eaf8-40a4-b2bf-98d75a645eb2"/>
+	<parameter name="logo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="startDate" class="java.util.Date">
+		<fieldDescription><![CDATA[startDate]]></fieldDescription>
+	</field>
+	<field name="serviceOrder" class="com.tooling.project.model.ServiceOrder">
+		<fieldDescription><![CDATA[serviceOrder]]></fieldDescription>
+	</field>
+	<field name="observation" class="java.lang.String">
+		<fieldDescription><![CDATA[observation]]></fieldDescription>
+	</field>
+	<field name="endDate" class="java.util.Date">
+		<fieldDescription><![CDATA[endDate]]></fieldDescription>
+	</field>
+	<field name="employee" class="com.tooling.project.model.Employee">
+		<fieldDescription><![CDATA[employee]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="82" height="43" uuid="b188df8e-bf89-4e45-9783-07de02fa2334"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="137" y="5" width="280" height="28" forecolor="#000000" uuid="b4ef1de7-64fb-49d7-94d1-b908082f5225"/>
+				<textElement textAlignment="Center">
+					<font fontName="Segoe UI" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Relatório de Apontamentos]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="432" y="0" width="80" height="20" uuid="01b863ae-49a1-4b66-bee0-0210b0799992"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="0" width="40" height="20" uuid="a2818568-0737-46e0-94de-93eb8d37baaa"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="455" y="13" width="100" height="20" uuid="c5788b84-1cbb-4658-b659-2350ba0c3f2f"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="33" width="554" height="1" uuid="d1c14b7e-b120-479d-a3b0-6ae554950af9"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="3" width="183" height="10" forecolor="#000000" uuid="424889f0-0d9b-4093-8aa1-5e78964f1988"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA["Soluções em Ferramentas para Corte, Dobra e Repuxo "]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="23" width="167" height="10" forecolor="#000000" uuid="ca6affdb-c0fc-4ecc-b39d-f73f893ad733"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[www.techtools.ind.br]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="13" width="167" height="10" forecolor="#000000" uuid="152ba783-1009-471c-81b4-f828e1450300"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Segoe UI" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Fone/Fax  (47) 3425-1001   Joinville - SC  ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="8" width="95" height="20" uuid="bc8f303e-79a6-4744-bee1-37555d4c1dc7"/>
+				<textElement markup="none">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Funcionário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="111" y="8" width="139" height="20" uuid="fc3f1fc1-f605-4c9b-b893-561bd93b0d78"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ordem de Serviço]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="358" y="8" width="89" height="20" uuid="7c452319-844b-4449-bfad-673b5311592e"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dt. Término]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="274" y="8" width="65" height="20" uuid="77ff5267-b636-415f-a71b-2f6491a96160"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dt. Início]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="8" width="89" height="20" uuid="216b742c-44aa-4fab-9b13-deabf594837b"/>
+				<textElement>
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observação]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="11" y="3" width="71" height="20" uuid="8c039b82-8440-4452-839c-79c4503f2607"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{employee}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="3" width="84" height="20" uuid="aad7391c-411c-40bf-afef-d3aa64cb432e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{serviceOrder}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="358" y="3" width="89" height="20" uuid="8bad6e7e-a1dc-41a1-8889-9e8b470458d7"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{endDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="272" y="3" width="69" height="20" uuid="9dc5bdaa-54cb-405c-a998-876e986db7fb"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{startDate}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="554" height="1" forecolor="#CFCECE" uuid="a64225b1-94b2-4c3b-ad8d-e256218219c7"/>
+			</line>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="466" y="3" width="89" height="20" uuid="7cd341e2-62f9-4d79-b7e5-0bf1bbf213fb"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{observation}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

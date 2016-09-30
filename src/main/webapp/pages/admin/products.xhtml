@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formProducts">
+				<p:outputPanel>
+					<h:outputLabel value="Produtos" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos produtos da empresa." />
+				<p />
+				<br/>
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{productBean.filteredProducts}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="product" value="#{productBean.productDataModel}" id="products" editable="false" selection="#{productBean.entitySelected}" rowKey="#{product.id}" selectionMode="single">
+
+						<p:ajax event="rowSelect" listener="#{productBean.onRowSelect}" update=":formEdit:panelEdit :formProducts:buttons" />
+						<p:ajax event="rowUnselect" listener="#{productBean.onRowUnselect}" />
+
+						<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{product.id}">
+							<h:outputText value="#{product.id}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Nome" style="width:30%" filterMatchMode="contains" filterBy="#{product.name}">
+							<h:outputText value="#{product.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Descrição" style="width:35%" filterMatchMode="contains" filterBy="#{product.description}">
+							<h:outputText value="#{product.description}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Tipo" style="width:20%" filterMatchMode="exact" filterBy="#{product.type}" filterOptions="#{productBean.productTypeOptions}">
+							<h:outputText value="#{product.type.label}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertProduct.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editProduct.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{productBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{productBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{productBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{productBean.remove}" update=":formProducts:products" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+
+			<p:dialog id="modalProducts" header="Inserir Produto" widgetVar="insertProduct" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+								<p:inputText id="name" value="#{productBean.entity.name}" styleClass="inputText"/>
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputTextarea id="description" value="#{productBean.entity.description}" styleClass="inputTextArea"/>
+
+								<h:outputLabel value="Tipo:" for="type" styleClass="mandatory" />
+								<p:selectOneMenu id="type" value="#{productBean.entity.type}" styleClass="inputText">
+									<f:selectItems value="#{productBean.productTypeOptions}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{productBean.save}" oncomplete="insertProduct.hide(); cleanProductsInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{productBean.save}" update=":formProducts:products panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertProduct.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+			<p:dialog id="modalProductsEdit" header="Editar Produto" widgetVar="editProduct" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Nome:" for="nameUpdate" styleClass="mandatory" />
+								<p:inputText id="nameUpdate" value="#{productBean.entitySelected.name}" styleClass="inputText"/>
+
+								<h:outputLabel value="Descrição:" for="descriptionUpdate" styleClass="mandatory" />
+								<p:inputTextarea id="descriptionUpdate" value="#{productBean.entitySelected.description}" styleClass="inputTextArea"/>
+
+								<h:outputLabel value="Tipo:" for="typeUpdate" styleClass="mandatory" />
+								<p:selectOneMenu id="typeUpdate" value="#{productBean.entitySelected.type}" styleClass="inputText">
+									<f:selectItems value="#{productBean.productTypeOptions}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{productBean.update}" oncomplete="editProduct.hide()" update=":formProducts:products" ajax="false" />
+						<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{productBean.extractInformation}" ajax="false"/>
+						<p:commandButton id="btClose" value="Cancelar" onclick="editProduct.hide()" icon="ui-icon-close" />
+
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

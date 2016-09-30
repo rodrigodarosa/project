@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<p:outputPanel>
+				<h:outputLabel value="Funcionários" styleClass="title" />
+			</p:outputPanel>
+			<p:separator />
+
+			<h:outputText value="Abaixo está a relação dos funcionários da empresa." />
+			<p />
+			<br />
+			<h:form id="formEmployees">
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{employeeBean.filteredEmployees}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="employee" value="#{employeeBean.employeeDataModel}" id="employees" editable="false" selection="#{employeeBean.entitySelected}" selectionMode="single" rowKey="#{employee.id}">
+
+						<p:ajax event="rowSelect" listener="#{employeeBean.onRowSelect}" update=":formEdit:panelEdit :formEmployees:buttons" />
+						<p:ajax event="rowUnselect" listener="#{employeeBean.onRowUnselect}" />
+
+						<p:column headerText="CPF" style="width:1%" filterMatchMode="contains" filterBy="#{employee.cpf}">
+							<h:outputText value="#{employee.cpf}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}">
+							<h:outputText value="#{employee.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Endereço" style="width:20%" filterMatchMode="contains" filterBy="#{employee.address}">
+							<h:outputText value="#{employee.address}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Telefone" style="width:15%" filterMatchMode="contains" filterBy="#{employee.telephone}">
+							<h:outputText value="#{employee.telephone}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Perfil" style="width:10%" filterMatchMode="exact" filterBy="#{employee.profile}" filterOptions="#{employeeBean.profilesOptions}">
+							<h:outputText value="#{employee.profile.label}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="E-mail" style="width:15%" filterMatchMode="contains" filterBy="#{employee.email}">
+							<h:outputText value="#{employee.email}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertEmployee.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editEmployee.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{employeeBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{employeeBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{employeeBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{employeeBean.remove}" update=":formEmployees:employees" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog id="modalEmployee" header="Inserir Funcionário" widgetVar="insertEmployee" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+										<p:inputText id="name" value="#{employeeBean.entity.name}" styleClass="inputText" />
+
+										<h:outputLabel value="CPF:" for="cpf" styleClass="mandatory" />
+										<p:inputMask mask="999.999.999-99" id="cpf" value="#{employeeBean.entity.cpf}" styleClass="inputText" />
+
+										<h:outputLabel value="Endereço:" for="address" styleClass="mandatory" />
+										<p:inputText id="address" value="#{employeeBean.entity.address}" styleClass="inputText" />
+
+										<h:outputLabel value="CEP:" for="cep" styleClass="mandatory" />
+										<p:inputMask mask="99999-999" id="cep" value="#{employeeBean.entity.cep}" styleClass="inputText" />
+
+										<h:outputLabel value="Sexo:" for="sex" styleClass="mandatory" />
+										<p:selectOneMenu id="sex" value="#{employeeBean.entity.sex}" styleClass="inputText">
+											<f:selectItems value="#{employeeBean.sexOptions}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Estado Civil:" for="civilStatus" />
+										<p:selectOneMenu id="civilStatus" value="#{employeeBean.entity.civilStatus}" styleClass="inputText">
+											<f:selectItems value="#{employeeBean.civilStatusOptions}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Nome da Mãe:" for="motherName" />
+										<p:inputText id="motherName" value="#{employeeBean.entity.motherName}" styleClass="inputText" />
+
+										<h:outputLabel value="Nome do Pai:" for="fatherName" />
+										<p:inputText id="fatherName" value="#{employeeBean.entity.fatherName}" styleClass="inputText" />
+									</p:panelGrid>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="E-mail:" for="email" />
+										<p:inputText id="email" value="#{employeeBean.entity.email}" styleClass="inputText" />
+
+										<h:outputLabel value="Telefone:" for="telephone" styleClass="mandatory" />
+										<p:inputMask mask="(99) 9999-9999" id="telephone" value="#{employeeBean.entity.telephone}" styleClass="inputText" />
+
+										<h:outputLabel value="Login:" for="login" styleClass="mandatory" />
+										<p:inputText id="login" value="#{employeeBean.entity.username}" styleClass="inputText" />
+
+										<h:outputLabel value="Senha:" for="password" styleClass="mandatory" />
+										<p:inputText type="password" id="password" autocomplete="true" value="#{employeeBean.entity.password}" match="confirmPass" validatorMessage="Senhas não conferem!" styleClass="inputText" />
+
+										<h:outputLabel value="Estado:" for="state" />
+										<p:selectOneMenu id="state" value="#{employeeBean.state}" converter="stateConverter" styleClass="inputText">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{stateBean.all}" var="e" itemValue="#{e}" itemLabel="#{e.name}" />
+											<p:ajax update="city" listener="#{employeeBean.handleCityChange}" />
+
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Cidade:" for="city" />
+										<p:selectOneMenu id="city" value="#{employeeBean.city}" converter="cityConverter" styleClass="inputText">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{employeeBean.cities}" var="c" itemValue="#{c}" itemLabel="#{c.name}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Perfil:" for="profile" styleClass="mandatory" />
+										<p:selectOneMenu id="profile" value="#{employeeBean.entity.profile}" styleClass="inputText">
+											<f:selectItems value="#{employeeBean.profilesOptions}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</h:panelGroup>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{employeeBean.save}" oncomplete="insertEmployee.hide(); cleanEmployeeInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{employeeBean.save}" update=":formEmployees:employees panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertEmployee.hide()" icon="ui-icon-close" ajax="true" immediate="true" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalEmployeeEdit" header="Editar Funcionário" widgetVar="editEmployee" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+										<p:inputText id="name" value="#{employeeBean.entitySelected.name}" styleClass="inputText" />
+
+										<h:outputLabel value="CPF:" for="cpf" styleClass="mandatory" />
+										<p:inputMask mask="999.999.999-99" id="cpf" value="#{employeeBean.entitySelected.cpf}" styleClass="inputText" />
+
+										<h:outputLabel value="Endereço:" for="address" styleClass="mandatory" />
+										<p:inputText id="address" value="#{employeeBean.entitySelected.address}" styleClass="inputText" />
+
+										<h:outputLabel value="CEP:" for="cep" styleClass="mandatory" />
+										<p:inputMask mask="99999-999" id="cep" value="#{employeeBean.entitySelected.cep}" styleClass="inputText" />
+
+										<h:outputLabel value="Sexo:" for="sex" styleClass="mandatory" />
+										<p:selectOneMenu id="sex" value="#{employeeBean.entitySelected.sex}" styleClass="inputText">
+											<f:selectItems value="#{employeeBean.sexOptions}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Estado Civil:" for="civilStatus" />
+										<p:selectOneMenu id="civilStatus" value="#{employeeBean.entitySelected.civilStatus}" styleClass="inputText">
+											<f:selectItems value="#{employeeBean.civilStatusOptions}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Nome da Mãe:" for="motherName" />
+										<p:inputText id="motherName" value="#{employeeBean.entitySelected.motherName}" styleClass="inputText" />
+
+										<h:outputLabel value="Nome do Pai:" for="fatherName" />
+										<p:inputText id="fatherName" value="#{employeeBean.entitySelected.fatherName}" styleClass="inputText" />
+									</p:panelGrid>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="E-mail:" for="email" />
+										<p:inputText id="email" value="#{employeeBean.entitySelected.email}" styleClass="inputText" />
+
+										<h:outputLabel value="Telefone:" for="telephone" styleClass="mandatory" />
+										<p:inputMask mask="(99) 9999-9999" id="telephone" value="#{employeeBean.entitySelected.telephone}" styleClass="inputText" />
+
+										<h:outputLabel value="Login:" for="login" styleClass="mandatory" />
+										<p:inputText id="login" value="#{employeeBean.entitySelected.username}" styleClass="inputText" />
+
+										<h:outputLabel value="Senha:" for="password" styleClass="mandatory" />
+										<p:inputText type="password" id="password" value="#{employeeBean.entitySelected.password}" match="confirmPass" validatorMessage="Senhas não conferem!" styleClass="inputText" />
+
+										<h:outputLabel value="Estado:" for="state" />
+										<p:selectOneMenu id="state" value="#{employeeBean.state}" converter="stateConverter" styleClass="inputText">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{stateBean.all}" var="e" itemValue="#{e}" itemLabel="#{e.name}" />
+											<p:ajax update="city" listener="#{employeeBean.handleCityChange}" />
+
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Cidade:" for="city" />
+										<p:selectOneMenu id="city" value="#{employeeBean.city}" converter="cityConverter" styleClass="inputText">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{employeeBean.cities}" var="c" itemValue="#{c}" itemLabel="#{c.name}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Perfil:" for="profile" styleClass="mandatory" />
+										<p:selectOneMenu id="profile" value="#{employeeBean.entitySelected.profile}">
+											<f:selectItems value="#{employeeBean.profilesOptions}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</h:panelGroup>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btUpdate" value="Salvar" icon="ui-icon-check" action="#{employeeBean.update}" oncomplete="editEmployee.hide()" update=":formEmployees:employees" ajax="false"/>
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{employeeBean.extractInformation}" ajax="false"/>
+							<p:commandButton id="btClose" value="Cancelar" onclick="editEmployee.hide()" icon="ui-icon-close" immediate="true" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

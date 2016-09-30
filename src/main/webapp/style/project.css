@@ -1,0 +1,108 @@
+.ui-widget {
+	font-size: 12px !important;
+}
+
+.panelNB tr,.panelNB td {
+	border: none !important;
+	background: none;
+}
+
+.mandatory {
+	font-weight: bold;
+}
+
+.title {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.icone {
+	height: 15px;
+	cursor: pointer;
+}
+
+.ui-datatable .ui-datatable-data .even-row td {
+	background-color: #B4B4B4;
+}
+
+.ui-datatable .ui-datatable-data .odd-row td {
+	background-color: #E6E6E6;
+}
+
+.inputTextArea {
+	width: 130px !important;
+	height: 100px !important;
+}
+
+.inputText {
+	width: 130px !important;
+}
+
+.ui-tabs.ui-tabs-top .ui-tabs-nav {
+	float: left;
+}
+
+.buttonLogin {
+	-moz-box-shadow: inset -1px 0px 14px 0px #ffffff;
+	-webkit-box-shadow: inset -1px 0px 14px 0px #ffffff;
+	box-shadow: inset -1px 0px 14px 0px #ffffff;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed
+		), color-stop(1, #dfdfdf));
+	background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed',
+		endColorstr='#dfdfdf');
+	background-color: #ededed;
+	-webkit-border-top-left-radius: 0px;
+	-moz-border-radius-topleft: 0px;
+	border-top-left-radius: 0px;
+	-webkit-border-top-right-radius: 0px;
+	-moz-border-radius-topright: 0px;
+	border-top-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-bottom-right-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-bottom-left-radius: 0px;
+	text-indent: 0px;
+	border: 1px solid #dcdcdc;
+	display: inline-block;
+	color: #777777;
+	font-family: Arial;
+	font-size: 16px;
+	font-weight: bold;
+	font-style: normal;
+	height: 41px;
+	line-height: 41px;
+	width: 100px;
+	text-decoration: none;
+	text-align: center;
+	text-shadow: 0px 0px 0px #ffffff;
+}
+
+.buttonLogin:hover {
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf
+		), color-stop(1, #ededed));
+	background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf',
+		endColorstr='#ededed');
+	background-color: #dfdfdf;
+}
+
+.buttonLogin:active {
+	position: relative;
+	top: 1px;
+}
+
+.form {
+	padding: 0;
+}
+
+.ui-accordion-header{
+	margin-bottom: 2px !important;
+	border: 1px solid #C9C1C1 !important;
+}
+
+.ui-menu.ui-widget {
+	background-color: #EBEBEB !important;
+}

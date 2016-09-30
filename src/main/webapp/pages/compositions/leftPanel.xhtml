@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+
+	<h:form id="annotationsForm">
+		<p:fieldset legend="Anotações">
+			<c:forEach items="#{annotationBean.lastThree}" var="annotation">
+
+				<p:outputPanel>
+					<h4>#{annotation.title}</h4>
+					<hr />
+				#{annotation.description}
+				</p:outputPanel>
+
+				<div align="right">
+
+					<p:commandButton ajax="true" onclick="annotationDialog.show()" update=":dialog" icon="ui-icon-pencil">
+						<f:setPropertyActionListener target="#{annotationBean.entity}" value="#{annotation}" />
+					</p:commandButton>
+
+					<p:commandButton ajax="false" action="#{annotationBean.remove}" update="annotationsForm" icon="ui-icon-closethick">
+						<f:setPropertyActionListener target="#{annotationBean.entity}" value="#{annotation}" />
+					</p:commandButton>
+				</div>
+				<p />
+				<p />
+			</c:forEach>
+			<div align="center">
+				<h:outputText value="Não há anotações." rendered="#{annotationBean.lastThree==null || empty annotationBean.lastThree}" />
+				<p />
+				<p:commandButton value="Nova Anotação" id="newAnnotation" icon="ui-icon-plus" onclick="annotationDialog.show()" ajax="true" />
+			</div>
+		</p:fieldset>
+
+	</h:form>
+	<p:dialog id="annotationPanel" hideEffect="fade" widgetVar="annotationDialog" appendTo="@(body)" header="Nova Anotação" resizable="false">
+		<div align="right">
+			<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+		</div>
+		<p />
+		<h:form id="dialog">
+			<p:panelGrid columns="2" styleClass="panelNB">
+				<h:outputText value="Título:" styleClass="mandatory" />
+				<p:inputText id="title" value="#{annotationBean.entity.title}" style="width: 200px" />
+
+				<h:outputText value="Descrição:" styleClass="mandatory" />
+				<p:inputTextarea id="description" value="#{annotationBean.entity.description}" style="width: 200px; height: 200px" />
+			</p:panelGrid>
+
+			<p:commandButton value="Salvar" action="#{annotationBean.save}" oncomplete="annotationDialog.hide()" update=":annotationsForm" ajax="false" />
+			<p:commandButton value="Cancelar" onclick="annotationDialog.hide()" />
+		</h:form>
+		<br />
+	</p:dialog>
+
+</h:body>
+</html>

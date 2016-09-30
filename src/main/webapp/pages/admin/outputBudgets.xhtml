@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formOutputBudgets">
+				<p:outputPanel>
+					<h:outputLabel value="Orçamentos de Saída" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos orçamentos de saída da empresa." />
+				<p />
+				<br/>
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{outputBudgetBean.filteredOutputBudgets}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="outputBudget" value="#{outputBudgetBean.outputBudgetDataModel}" id="outputBudgets" editable="false" selection="#{outputBudgetBean.entitySelected}" selectionMode="single" rowKey="#{outputBudget.id}">
+
+						<p:ajax event="rowSelect" listener="#{outputBudgetBean.onRowSelect}" update=":formEdit:panelEdit :formOutputBudgets:buttons" />
+						<p:ajax event="rowUnselect" listener="#{outputBudgetBean.onRowUnselect}" />
+
+						<p:column headerText="Descrição" style="width:20%" filterMatchMode="contains" filterBy="#{outputBudget.description}">
+							<h:outputText value="#{outputBudget.description}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Fornecedor" style="width:15%" filterMatchMode="contains" filterBy="#{outputBudget.provider.name}">
+							<h:outputText value="#{outputBudget.provider.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Data de Entrega" style="width:15%">
+							<h:outputText value="#{outputBudget.deliveryDate}" style="width:10%" filterMatchMode="exact" filterBy="#{outputBudget.deliveryDate}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Quantidade" style="width:10%">
+							<h:outputText value="#{outputBudget.quantity}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertOutputBudget.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editOutputBudget.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{outputBudgetBean.entitySelected.id==null}" />
+								<p:commandButton id="btSendMail" value="Solicitar Orçamento"  ajax="false" icon="ui-icon-mail-closed" disabled="#{outputBudgetBean.entitySelected.id==null}" action="#{outputBudgetBean.sendMail}"/>
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{outputBudgetBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{outputBudgetBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{outputBudgetBean.remove}" update=":formOutputBudgets:outputBudgets" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<p:dialog id="modalInputBudget" header="Inserir Orçamento de Saída" widgetVar="insertOutputBudget" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:dialog widgetVar="searchProviderInsert" id="searchProviderInsert" header="Pesquisar Fornecedor" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="providerSearch" value="#{providerBean.providerDataModel}" id="providers" editable="false" selection="#{outputBudgetBean.entitySelectedSearch}" selectionMode="single" rowKey="#{providerSearch.id}">
+
+									<p:column headerText="CNPJ" style="width:15%" filterMatchMode="contains" filterBy="#{provideproviderSearch.cnpj}">
+										<h:outputText value="#{providerSearch.cnpj}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{providerSearch.name}">
+										<h:outputText value="#{providerSearch.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Endereço" style="width:35%" filterMatchMode="contains" filterBy="#{providerSearch.address}">
+										<h:outputText value="#{providerSearch.address}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:35%" filterMatchMode="contains" filterBy="#{providerSearch.telephone}">
+										<h:outputText value="#{providerSearch.telephone}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{outputBudgetBean.applyProvider}" ajax="true" update=":formInsert:providerName" oncomplete="searchProviderInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchProviderInsert.hide()" />
+								</p:panel>
+							</p:dialog>
+
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Nome do Fornecedor:" for="providerName" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="providerName" value="#{outputBudgetBean.providerName}" disabled="true" styleClass="inputText"/>
+									<p:graphicImage id="zoom" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchProviderInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputText id="description" value="#{outputBudgetBean.entity.description}" styleClass="inputText"/>
+
+								<h:outputLabel value="Especificação Técnica:" for="technicalSpecification" styleClass="mandatory" />
+								<p:inputTextarea id="technicalSpecification" value="#{outputBudgetBean.entity.technicalSpecification}" styleClass="inputTextArea"/>
+
+								<h:outputLabel value="Data de Entrega:" for="deliveryDate" styleClass="mandatory" />
+								<p:calendar id="deliveryDate" value="#{outputBudgetBean.entity.deliveryDate}" showOn="button" styleClass="inputText"/>
+
+								<h:outputLabel value="Quantidade:" for="quantity" styleClass="mandatory" />
+								<p:inputText id="quantity" value="#{outputBudgetBean.entity.quantity}" styleClass="inputText" />
+
+
+
+							</p:panelGrid>
+
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{outputBudgetBean.save}" oncomplete="insertInputBudget.hide(); cleanOutputBudgetInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{outputBudgetBean.save}" update=":formOutputBudgets:outputBudgets panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertOutputBudget.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalInputBudgetEdit" header="Editar Orçamento de Saída" widgetVar="editOutputBudget" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:dialog widgetVar="searchProviderEdit" id="searchProviderEdit" header="Pesquisar Fornecedor" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="providerSearch" value="#{providerBean.providerDataModel}" id="providers" editable="false" selection="#{outputBudgetBean.entitySelectedSearch}" selectionMode="single" rowKey="#{providerSearch.id}">
+
+									<p:column headerText="CNPJ" style="width:15%" filterMatchMode="contains" filterBy="#{provideproviderSearch.cnpj}">
+										<h:outputText value="#{providerSearch.cnpj}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:45%" filterMatchMode="contains" filterBy="#{providerSearch.name}">
+										<h:outputText value="#{providerSearch.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Endereço" style="width:35%" filterMatchMode="contains" filterBy="#{providerSearch.address}">
+										<h:outputText value="#{providerSearch.address}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:35%" filterMatchMode="contains" filterBy="#{providerSearch.telephone}">
+										<h:outputText value="#{providerSearch.telephone}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{outputBudgetBean.applyProvider}" ajax="true" update=":formEdit:providerName" oncomplete="searchProviderEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchProviderEdit.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Nome do Fornecedor:" for="providerName" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="providerName" value="#{outputBudgetBean.providerName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoom" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchProviderEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputText id="description" value="#{outputBudgetBean.entitySelected.description}" styleClass="inputText"/>
+
+								<h:outputLabel value="Especificação Técnica:" for="technicalSpecification" styleClass="mandatory" />
+								<p:inputTextarea id="technicalSpecification" value="#{outputBudgetBean.entitySelected.technicalSpecification}" styleClass="inputTextArea"/>
+
+								<h:outputLabel value="Data de Entrega:" for="deliveryDate" styleClass="mandatory" />
+								<p:calendar id="deliveryDate" value="#{outputBudgetBean.entitySelected.deliveryDate}" showOn="button" styleClass="inputText"/>
+
+								<h:outputLabel value="Quantidade:" for="quantity" styleClass="mandatory" />
+								<p:inputText id="quantity" value="#{outputBudgetBean.entitySelected.quantity}" styleClass="inputText"/>
+								
+								<h:outputLabel value="Solicitante:" for="req" styleClass="mandatory" />
+								<h:outputText id="req" value="#{outputBudgetBean.entitySelected.employee}"/>
+
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{outputBudgetBean.update}" oncomplete="insertInputBudget.hide()" update=":formInputBudgets:outputBudgets" ajax="false" />
+						<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{outputBudgetBean.extractInformation}" ajax="false"/>
+						<p:commandButton id="btClose" value="Cancelar" onclick="editOutputBudget.hide()" icon="ui-icon-close" />
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

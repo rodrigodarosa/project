@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formNotations">
+				<p:outputPanel>
+					<h:outputLabel value="Apontamentos" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos apontamentos dos funcionários da empresa." rendered="#{employeeBean.currentEmployee.profile=='ADMINISTRATOR'}" />
+				<h:outputText value="Abaixo está a relação dos seus apontamentos." rendered="#{employeeBean.currentEmployee.profile=='OPERATOR'}" />
+				<p />
+				<br />
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{notationBean.filteredNotations}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="notation" value="#{notationBean.notationDataModel}" id="notations" editable="false" selection="#{notationBean.entitySelected}" selectionMode="single" rowKey="#{notation.id}">
+
+
+						<p:ajax event="rowSelect" listener="#{notationBean.onRowSelect}" update=":formEdit:panelEdit :formNotations:buttons" />
+						<p:ajax event="rowUnselect" listener="#{notationBean.onRowUnselect}" />
+
+						<p:column headerText="Funcionário" style="width:15%" filterMatchMode="contains" filterBy="#{notation.employee.name}">
+							<h:outputText value="#{notation.employee.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Ordem de Serviço" style="width:45%" filterMatchMode="contains" filterBy="#{notation.serviceOrder.description}">
+							<h:outputText value="#{notation.serviceOrder.description}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Data de Início" style="width:20%">
+							<h:outputText value="#{notation.startDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Data de Término" style="width:35%" >
+							<h:outputText value="#{notation.endDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy - HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Observação:" style="width:35%" filterMatchMode="contains" filterBy="#{notation.observation}">
+							<h:outputText value="#{notation.observation}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="3" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertNotation.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editNotation.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{notationBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{notationBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{notationBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+							<h:panelGroup style="width:100px">
+								<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/clock.png" width="25" height="25" style="padding-right: 10px; float: left; display: inline-block" />
+								<p style="display: inline-block; margin-top: 7px;">
+									<h:outputText value="Clique sobre um apontamento para visualizar o total de horas." rendered="#{notationBean.entitySelected.id==null}" />
+								</p>
+								<p style="display: inline-block; margin-top: 7px;">
+									<h:outputText value="#{notationBean.totalTime}" id="totalTime" rendered="#{notationBean.entitySelected.id!=null}" />
+								</p>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{notationBean.remove}" update=":formNotations:notations" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<p:dialog id="modalNotation" header="Inserir Apontamento" widgetVar="insertNotation" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:dialog widgetVar="searchEmployeeInsert" id="searchEmployeeInsert" header="Pesquisar Funcionário" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.employeeDataModel}" id="employees" editable="false" selection="#{notationBean.entitySelectedSearch}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:1%" filterMatchMode="contains" filterBy="#{employee.cpf}">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{notationBean.applyEmployee}" ajax="true" update=":formInsert:employeeName" oncomplete="searchEmployeeInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeInsert.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:dialog widgetVar="searchServiceOrderInsert" id="searchServiceOrderInsert" header="Pesquisar Ordem de Serviço" width="50%" resizable="false">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="serviceOrder" value="#{serviceOrderBean.serviceOrderDataModel}" id="serviceOrders" editable="false" selection="#{notationBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{serviceOrder.id}">
+
+									<p:column headerText="Descrição" style="width:20%" filterMatchMode="contains" filterBy="#{serviceOrder.description}">
+										<h:outputText value="#{serviceOrder.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Funcionário" style="width:15%" filterMatchMode="contains" filterBy="#{serviceOrder.employee.name}">
+										<h:outputText value="#{serviceOrder.employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Data de Início" style="width:25%" filterMatchMode="contains" filterBy="#{serviceOrder.startDate}">
+										<h:outputText value="#{serviceOrder.startDate}" style="width:10%">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Data de Término" style="width:25%" filterMatchMode="contains" filterBy="#{serviceOrder.endDate}">
+										<h:outputText value="#{serviceOrder.endDate}" style="width:10%">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{notationBean.applyServiceOrder}" ajax="true" update=":formInsert:serviceOrderNumber" oncomplete="searchServiceOrderInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchServiceOrderInsert.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Funcionário:" for="employeeName" styleClass="mandatory" rendered="#{employeeBean.currentEmployee.profile!= 'OPERATOR'}" />
+								<h:panelGroup rendered="#{employeeBean.currentEmployee.profile!= 'OPERATOR'}">
+									<p:inputText id="employeeName" value="#{notationBean.employeeName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Ordem de Serviço:" for="serviceOrderNumber" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="serviceOrderNumber" value="#{notationBean.serviceOrderNumber}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomServiceOrder" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchServiceOrderInsert.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Data de Início:" for="startDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" id="startDate" value="#{notationBean.entity.startDate}" showOn="button" styleClass="inputText" locale="pt" />
+
+								<h:outputLabel value="Data de Término:" for="endDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" id="endDate" value="#{notationBean.entity.endDate}" showOn="button" styleClass="inputText" locale="pt" />
+
+								<h:outputLabel value="Observação" for="observation" />
+								<p:inputTextarea cols="20" rows="5" id="observation" value="#{notationBean.entity.observation}" styleClass="inputTextArea" />
+
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{notationBean.save}" oncomplete="insertNotation.hide(); cleanNotationInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{notationBean.save}" update=":formNotations:notations panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertNotation.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalNotationEdit" header="Editar Apontamento" widgetVar="editNotation" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+
+							<p:dialog widgetVar="searchEmployeeEdit" id="searchEmployeeEdit" header="Pesquisar Funcionário" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="employee" value="#{employeeBean.employeeDataModel}" id="employees" editable="false" selection="#{notationBean.entitySelectedSearch}" selectionMode="single" rowKey="#{employee.id}">
+
+									<p:column headerText="CPF" style="width:1%" filterMatchMode="contains" filterBy="#{employee.cpf}">
+										<h:outputText value="#{employee.cpf}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{employee.name}">
+										<h:outputText value="#{employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Telefone" style="width:20%" filterMatchMode="contains" filterBy="#{employee.telephone}">
+										<h:outputText value="#{employee.telephone}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{employee.email}">
+										<h:outputText value="#{employee.email}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{notationBean.applyEmployee}" ajax="true" update=":formEdit:employeeName" oncomplete="searchEmployeeEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchEmployeeEdit.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:dialog widgetVar="searchServiceOrderEdit" id="searchServiceOrderEdit" header="Pesquisar Ordem de Serviço" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="serviceOrder" value="#{serviceOrderBean.serviceOrderDataModel}" id="serviceOrders" editable="false" selection="#{notationBean.entitySelectedSearch2}" selectionMode="single" rowKey="#{serviceOrder.id}">
+
+									<p:column headerText="Descrição" style="width:20%" filterMatchMode="contains" filterBy="#{serviceOrder.description}">
+										<h:outputText value="#{serviceOrder.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Funcionário" style="width:15%" filterMatchMode="contains" filterBy="#{serviceOrder.employee.name}">
+										<h:outputText value="#{serviceOrder.employee.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Data de Início" style="width:25%" filterMatchMode="contains" filterBy="#{serviceOrder.startDate}">
+										<h:outputText value="#{serviceOrder.startDate}" style="width:10%">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Data de Término" style="width:25%" filterMatchMode="contains" filterBy="#{serviceOrder.endDate}">
+										<h:outputText value="#{serviceOrder.endDate}" style="width:10%">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+								</p:dataTable>
+								<p />
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{notationBean.applyServiceOrder}" ajax="true" update=":formEdit:serviceOrderNumber" oncomplete="searchServiceOrderEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchServiceOrderEdit.hide()" />
+								</p:panel>
+
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Situação da O.S.:" />
+								<p:graphicImage id="running" value="#{facesContext.externalContext.requestContextPath}/../images/running.png" style="width:25px; float: left" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'ASSEMBLING'}" />
+								<p:graphicImage id="completed" value="#{facesContext.externalContext.requestContextPath}/../images/completed.png" style="width:25px; float: left" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'FINALIZED'}" />
+								<p:graphicImage id="paused" value="#{facesContext.externalContext.requestContextPath}/../images/pause.png" style="width:25px; float: left" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'STAND_BY'}" />
+								<p:graphicImage id="pending" value="#{facesContext.externalContext.requestContextPath}/../images/pending.png" style="width:25px; float: left" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'NOT_INITIATED'}" />
+
+								<h:outputLabel value="Funcionário:" for="employeeName" styleClass="mandatory" rendered="#{employeeBean.currentEmployee.profile!= 'OPERATOR'}" />
+								<h:panelGroup rendered="#{employeeBean.currentEmployee.profile!= 'OPERATOR'}">
+									<p:inputText id="employeeName" value="#{notationBean.employeeName}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomEmployee" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchEmployeeEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Ordem de Serviço:" for="serviceOrderNumber" styleClass="mandatory" />
+								<h:panelGroup>
+									<p:inputText id="serviceOrderNumber" value="#{notationBean.serviceOrderNumber}" disabled="true" styleClass="inputText" />
+									<p:graphicImage id="zoomServiceOrder" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchServiceOrderEdit.show()" />
+								</h:panelGroup>
+
+								<h:outputLabel value="Data de Início:" for="startDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" id="startDate" value="#{notationBean.entitySelected.startDate}" showOn="button" styleClass="inputText" locale="pt" />
+
+								<h:outputLabel value="Data de Término:" for="endDate" styleClass="mandatory" />
+								<p:calendar pattern="dd/MM/yyyy HH:mm:ss" id="endDate" value="#{notationBean.entitySelected.endDate}" showOn="button" styleClass="inputText" locale="pt" />
+
+								<h:outputLabel value="Razão da Pausa:" for="pauseReason" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'STAND_BY'}" />
+								<p:selectOneMenu id="pauseReason" value="#{notationBean.entitySelected.pauseReason}" rendered="#{notationBean.entitySelected.serviceOrder.situation == 'STAND_BY'}" styleClass="inputText">
+									<f:selectItems value="#{notationBean.pauseReasonOptions}" />
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Observação:" for="observationUpdate" />
+								<p:inputTextarea cols="20" rows="5" id="observationUpdate" value="#{notationBean.entitySelected.observation}" styleClass="inputTextArea" />
+
+							</p:panelGrid>
+							<br />
+						</div>
+						<p:fieldset legend="Legenda">
+							<div align="center">
+								<p:panelGrid columns="8" styleClass="panelNB">
+									<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pending.png" style="width:15px" />
+									<h:outputText value="Pendente" />
+									<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/pause.png" style="width:15px" />
+									<h:outputText value="Pausada" />
+									<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/running.png" style="width:15px" />
+									<h:outputText value="Executando" />
+									<p:graphicImage value="#{facesContext.externalContext.requestContextPath}/../images/completed.png" style="width:15px" />
+									<h:outputText value="Finalizada" />
+								</p:panelGrid>
+
+							</div>
+						</p:fieldset>
+
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{notationBean.update}" oncomplete="editNotation.hide()" update=":formNotations:notations" ajax="false" />
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{notationBean.extractInformation}" ajax="false" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="editNotation.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formPayables">
+				<p:outputPanel>
+					<h:outputLabel value="Contas a Pagar" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação das contas a pagar da empresa." />
+				<p />
+				<br/>
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{payableBean.filteredPayables}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="payable" value="#{payableBean.payableDataModel}" id="payables" editable="false" selection="#{payableBean.entitySelected}" selectionMode="single" rowKey="#{payable.id}">
+
+						<p:ajax event="rowSelect" listener="#{payableBean.onRowSelect}" update=":formEdit:panelEdit :formPayables:buttons" />
+						<p:ajax event="rowUnselect" listener="#{payableBean.onRowUnselect}" />
+
+						<p:column headerText="Nº do Documento" style="width:15%" filterMatchMode="contains" filterBy="#{payable.documentNumber}">
+							<h:outputText value="#{payable.documentNumber}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Data do Documento" style="width:15%">
+							<h:outputText value="#{payable.documentDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Fornecedor" style="width:20%" filterMatchMode="contains" filterBy="#{payable.provider.name}">
+							<h:outputText value="#{payable.provider.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Situação de Quitação" style="width:15%" filterMatchMode="exact" filterBy="#{payable.dischargeSituation}" filterOptions="#{payableBean.dischargeSituationOptions}">
+							<h:outputText value="#{payable.dischargeSituation.label}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Data de Vencimento" style="width:15%">
+							<h:outputText value="#{payable.expirationDate}" style="width:10%">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Tipo de Pagamento" style="width:15%" filterMatchMode="exact" filterBy="#{payable.paymentType}" filterOptions="#{payableBean.paymentTypeOptions}">
+							<h:outputText value="#{payable.paymentType.label}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertPayable.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editPayable.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{payableBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{payableBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{payableBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{payableBean.remove}" update=":formPayables:payables" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog id="modalPayable" header="Inserir Conta a Pagar" widgetVar="insertPayable" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+							<p:dialog widgetVar="searchPurchaseInsert" id="searchPurchaseInsert" header="Pesquisar Compra" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="purchase" value="#{purchaseBean.purchaseDataModel}" id="purchases" editable="false" selection="#{payableBean.entitySelectedSearch}" selectionMode="single" rowKey="#{purchase.id}">
+
+									<p:column headerText="ID" style="width:10%" filterMatchMode="contains" filterBy="#{purchase.id}">
+										<h:outputText value="#{purchase.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Descricao" style="width:50%" filterMatchMode="contains" filterBy="#{purchase.description}">
+										<h:outputText value="#{purchase.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Fornecedor" style="width:20%" filterMatchMode="contains" filterBy="#{purchase.provider.name}">
+										<h:outputText value="#{purchase.provider.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Comprador" style="width:20%" filterMatchMode="contains" filterBy="#{purchase.buyer.name}">
+										<h:outputText value="#{purchase.buyer.name}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{payableBean.applyPurchase}" ajax="true" update=":formInsert:purchaseNumber :formInsert:providerName" oncomplete="searchPurchaseInsert.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchPurchaseInsert.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="Nº Compra:" for="purchaseNumber" styleClass="mandatory " />
+										<h:panelGroup>
+											<p:inputText id="purchaseNumber" value="#{payableBean.purchaseNumber}" disabled="true" styleClass="inputText" />
+											<p:graphicImage id="zoom" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchPurchaseInsert.show()" />
+										</h:panelGroup>
+
+										<h:outputLabel value="Nome do Fornecedor:" for="providerName" styleClass="mandatory" />
+										<p:inputText id="providerName" value="#{payableBean.providerName}" disabled="true" styleClass="inputText"/>
+
+										<h:outputLabel value="Nº Documento:" for="documentNumber" styleClass="mandatory" />
+										<p:inputText id="documentNumber" value="#{payableBean.entity.documentNumber}" styleClass="inputText"/>
+
+										<h:outputLabel value="Data Emissão Documento:" for="documentDate" styleClass="mandatory" />
+										<p:calendar id="documentDate" value="#{payableBean.entity.documentDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Descrição:" for="description" />
+										<p:inputTextarea id="description" value="#{payableBean.entity.description}" styleClass="inputTextArea"/>
+
+									</p:panelGrid>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="Situação:" for="situation" styleClass="mandatory" />
+										<p:selectOneMenu id="situation" value="#{payableBean.entity.dischargeSituation}" styleClass="inputText">
+											<f:selectItems value="#{payableBean.dischargeSituationOptions}" />
+											<p:ajax update="paymentDate" listener="#{payableBean.changeDischargeSituation}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Data de Pagamento:" for="paymentDate" />
+										<p:calendar id="paymentDate" disabled="#{!payableBean.paid}" value="#{payableBean.entity.paymentDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Data de Vencimento:" for="expirationDate" styleClass="mandatory" />
+										<p:calendar id="expirationDate" value="#{payableBean.entity.expirationDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Tipo de Pagamento:" for="paymentType" styleClass="mandatory" />
+										<p:selectOneMenu id="paymentType" value="#{payableBean.entity.paymentType}" styleClass="inputText">
+											<f:selectItems value="#{payableBean.paymentTypeOptions}" />
+											<p:ajax update="paymentTimes" listener="#{payableBean.changePaymentType}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Parcelas:" for="paymentTimes" />
+										<p:inputText maxlength="3" id="paymentTimes" disabled="#{!payableBean.times}" value="#{payableBean.entity.paymentTimes}" styleClass="inputText"/>
+
+										<h:outputLabel value="Valor Total:" for="totalValue" styleClass="mandatory" />
+										<p:inputText id="totalValue" value="#{payableBean.entity.totalValue}" styleClass="inputText"/>
+									</p:panelGrid>
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{payableBean.save}" oncomplete="insertPayable.hide(); cleanPayableInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{payableBean.save}" update=":formPayables:payables panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertPayable.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalPayableEdit" header="Editar Conta a Pagar" widgetVar="editPayable" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+
+							<p:dialog widgetVar="searchPurchaseEdit" id="searchPurchaseEdit" header="Pesquisar Compra" width="50%">
+								<p:dataTable emptyMessage="Não há registros a serem apresentados." paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="5" var="purchaseSearch" value="#{purchaseBean.purchaseDataModel}" id="purchasesSearch" editable="false" selection="#{payableBean.entitySelectedSearch}" selectionMode="single" rowKey="#{purchaseSearch.id}">
+
+									<p:column headerText="ID" style="width:10%" filterMatchMode="contains" filterBy="#{purchaseSearch.id}">
+										<h:outputText value="#{purchaseSearch.id}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Descrição" style="width:50%" filterMatchMode="contains" filterBy="#{purchase.description}">
+										<h:outputText value="#{purchaseSearch.description}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Fornecedor" style="width:20%" filterMatchMode="contains" filterBy="#{purchaseSearch.provider.name}">
+										<h:outputText value="#{purchaseSearch.provider.name}" style="width:10%" />
+									</p:column>
+
+									<p:column headerText="Comprador" style="width:20%" filterMatchMode="contains" filterBy="#{purchaseSearch.buyer.name}">
+										<h:outputText value="#{purchaseSearch.buyer.name}" style="width:10%" />
+									</p:column>
+
+								</p:dataTable>
+								<br />
+								<p:panel>
+									<p:commandButton icon="ui-icon-check" value="Aplicar" action="#{payableBean.applyPurchase}" ajax="true" update=":formEdit:purchaseNumberEdit :formEdit:providerNameEdit" oncomplete="searchPurchaseEdit.hide()" />
+									<p:commandButton icon="ui-icon-circle-close" value="Fechar" onclick="searchPurchaseEdit.hide()" />
+								</p:panel>
+							</p:dialog>
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:panelGroup>
+									<p:panelGrid columns="2" styleClass="panelNB">
+
+										<h:outputLabel value="Nº Compra:" for="purchaseNumberEdit" styleClass="mandatory" />
+										<h:panelGroup>
+											<p:inputText id="purchaseNumberEdit" value="#{payableBean.purchaseNumber}" disabled="true" styleClass="inputText"/>
+											<p:graphicImage id="zoom" value="#{facesContext.externalContext.requestContextPath}/../images/zoom.png" styleClass="icone" onclick="searchPurchaseEdit.show()" />
+										</h:panelGroup>
+
+										<h:outputLabel value="Nome do Fornecedor:" for="providerNameEdit" styleClass="mandatory" />
+										<p:inputText id="providerNameEdit" value="#{payableBean.providerName}" disabled="true" styleClass="inputText" />
+
+										<h:outputLabel value="Nº Documento:" for="documentNumberEdit" styleClass="mandatory" />
+										<p:inputText id="documentNumberEdit" value="#{payableBean.entitySelected.documentNumber}" styleClass="inputText" />
+
+										<h:outputLabel value="Data Emissão Documento:" for="documentDateEdit" styleClass="mandatory" />
+										<p:calendar id="documentDateEdit" value="#{payableBean.entitySelected.documentDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Descrição:" for="descriptionEdit" />
+										<p:inputTextarea id="descriptionEdit" value="#{payableBean.entitySelected.description}" styleClass="inputTextArea"/>
+
+
+									</p:panelGrid>
+								</h:panelGroup>
+								<h:panelGroup>
+
+									<p:panelGrid columns="2" styleClass="panelNB">
+										<h:outputLabel value="Situação:" for="situationEdit" styleClass="mandatory" />
+										<p:selectOneMenu id="situationEdit" value="#{payableBean.entitySelected.dischargeSituation}" styleClass="inputText">
+											<f:selectItems value="#{payableBean.dischargeSituationOptions}" />
+											<p:ajax update="paymentDateEdit" listener="#{payableBean.changeDischargeSituationEdit}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Data de Pagamento:" for="paymentDateEdit" />
+										<p:calendar id="paymentDateEdit" disabled="#{!payableBean.paid}" value="#{payableBean.entitySelected.paymentDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Data de Vencimento:" for="expirationDateEdit" styleClass="mandatory" />
+										<p:calendar id="expirationDateEdit" value="#{payableBean.entitySelected.expirationDate}" showOn="button" styleClass="inputText"/>
+
+										<h:outputLabel value="Tipo de Pagamento:" for="paymentTypeEdit" styleClass="mandatory" />
+										<p:selectOneMenu id="paymentTypeEdit" value="#{payableBean.entitySelected.paymentType}" styleClass="inputText">
+											<f:selectItems value="#{payableBean.paymentTypeOptions}" />
+											<p:ajax update="paymentTimesEdit" listener="#{payableBean.changePaymentTypeEdit}" />
+										</p:selectOneMenu>
+
+										<h:outputLabel value="Parcelas:" for="paymentTimesEdit" />
+										<p:inputText maxlength="3" id="paymentTimesEdit" disabled="#{!payableBean.times}" value="#{payableBean.entitySelected.paymentTimes}" styleClass="inputText"/>
+
+										<h:outputLabel value="Valor Total:" for="totalValueEdit" styleClass="mandatory" />
+										<p:inputText id="totalValueEdit" value="#{payableBean.entitySelected.totalValue}" styleClass="inputText"/>
+									</p:panelGrid>
+								</h:panelGroup>
+							</p:panelGrid>
+
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{payableBean.update}" oncomplete="editPayable.hide()" update=":formPayables:payables" ajax="false" />
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{payableBean.extractInformation}" ajax="false"/>
+							<p:commandButton id="btClose" value="Cancelar" onclick="editPayable.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

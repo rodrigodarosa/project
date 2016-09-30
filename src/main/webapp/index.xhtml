@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<title>Login</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/style/login.css" />
+	<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/style/project.css" />
+</h:head>
+<h:body>
+	<div class="container">
+		<section id="content"> 
+		<h:form id="ae" onkeypress=" if(event.key == 13 ) { this.form.submit(); }" >
+			<p:growl id="validation" autoUpdate="true" showDetail="true" />
+			
+			<h1><p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" /></h1>
+			<div>
+				<p:inputText type="text" placeholder="Usuário" required="" id="username" value="#{employeeBean.entity.username}" tabindex="1" />
+			</div>
+			<div>
+				<p:inputText type="password" placeholder="Senha" required="" id="password" value="#{employeeBean.entity.password}" tabindex="2" />
+			</div>
+			<div>
+				<p:commandButton action="#{employeeBean.doLogin}" value="Login" tabindex="3" styleClass="buttonLogin" accesskey="1"/>
+			</div>
+			<br/>
+			<h:outputText value="Tech Tools Ferramentaria © 2007. Todos os direitos reservados" style="font-size: 10px; color: gray"/>
+		</h:form> </section>
+
+	</div>
+</h:body>
+</html>

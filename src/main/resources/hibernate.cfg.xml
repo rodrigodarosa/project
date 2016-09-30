@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory name="toolingProject">
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.password">root</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/tooling</property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.default_schema">tooling</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
+
+		<mapping class="com.tooling.project.model.State" />
+		<mapping class="com.tooling.project.model.City" />
+		<mapping class="com.tooling.project.model.Customer" />
+		<mapping class="com.tooling.project.model.Employee" />
+		<mapping class="com.tooling.project.model.InputBudget" />
+		<mapping class="com.tooling.project.model.Machine" />
+		<mapping class="com.tooling.project.model.ManufacturedProduct" />
+		<mapping class="com.tooling.project.model.OutputBudget" />
+		<mapping class="com.tooling.project.model.Receivable" />
+		<mapping class="com.tooling.project.model.Payable" />
+		<mapping class="com.tooling.project.model.Product" />
+		<mapping class="com.tooling.project.model.Provider" />
+		<mapping class="com.tooling.project.model.Purchase" />
+		<mapping class="com.tooling.project.model.Sale" />
+		<mapping class="com.tooling.project.model.ServiceOrder" />
+		<mapping class="com.tooling.project.model.Notation" />
+		<mapping class="com.tooling.project.model.Annotation" />
+		<mapping class="com.tooling.project.model.Theme" />
+	</session-factory>
+</hibernate-configuration>

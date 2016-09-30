@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formManufacturedProducts">
+				<p:outputPanel>
+					<h:outputLabel value="Produtos Manufaturados" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos produtos manufaturados da empresa." />
+				<p />
+				<br />
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{manufacturedProductBean.filteredManufacturedProducts}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="manufacturedProduct" value="#{manufacturedProductBean.manufacturedProductDataModel}" id="manufacturedProducts" editable="false" selection="#{manufacturedProductBean.entitySelected}" selectionMode="single" rowKey="#{manufacturedProduct.id}">
+
+
+						<p:ajax event="rowSelect" listener="#{manufacturedProductBean.onRowSelect}" update=":formEdit:panelEdit :formManufacturedProducts:buttons" />
+						<p:ajax event="rowUnselect" listener="#{manufacturedProductBean.onRowUnselect}" />
+
+						<p:column headerText="ID" style="width:15%" filterMatchMode="contains" filterBy="#{manufacturedProduct.id}">
+							<h:outputText value="#{manufacturedProduct.id}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Nome" style="width:25%" filterMatchMode="contains" filterBy="#{manufacturedProduct.name}">
+							<h:outputText value="#{manufacturedProduct.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Descricao" style="width:30%" filterMatchMode="contains" filterBy="#{manufacturedProduct.description}">
+							<h:outputText value="#{manufacturedProduct.description}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Situation" style="width:15%" filterMatchMode="exact" filterBy="#{manufacturedProduct.situation}" filterOptions="#{manufacturedProductBean.manufacturedProductsSituationOptions}">
+							<h:outputText value="#{manufacturedProduct.situation.label}" style="width:10%" />
+						</p:column>
+
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertManufacturedProducts.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editManufacturedProducts.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{manufacturedProductBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{manufacturedProductBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{manufacturedProductBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{manufacturedProductBean.remove}" update=":formManufacturedProducts:manufacturedProducts" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog id="modalManufacturedProducts" header="Inserir Produto Manufaturado" widgetVar="insertManufacturedProducts" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+
+							<p:panelGrid columns="2" styleClass="panelNB">
+
+								<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+								<p:inputText id="name" value="#{manufacturedProductBean.entity.name}" styleClass="inputText" />
+
+
+								<h:outputLabel value="Descrição:" for="description" styleClass="mandatory" />
+								<p:inputTextarea id="description" value="#{manufacturedProductBean.entity.description}" styleClass="inputTextArea" />
+
+								<h:outputLabel value="Situação:" for="situation" styleClass="mandatory" />
+								<p:selectOneMenu id="situation" value="#{manufacturedProductBean.entity.situation}" styleClass="inputText">
+									<f:selectItems value="#{manufacturedProductBean.manufacturedProductsSituationOptions}" />
+								</p:selectOneMenu>
+
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{manufacturedProductBean.save}" oncomplete="insertManufacturedProducts.hide(); cleanManufacturedProductsInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{manufacturedProductBean.save}" update=":formManufacturedProducts:manufacturedProducts panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertManufacturedProducts.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+			<p:dialog id="modalManufacturedProductsEdit" header="Editar Produto Manufaturado" widgetVar="editManufacturedProducts" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Nome:" for="nameUpdate" styleClass="mandatory" />
+								<p:inputText id="nameUpdate" value="#{manufacturedProductBean.entitySelected.name}" styleClass="inputText" />
+
+								<h:outputLabel value="Descrição:" for="descriptionUpdate" styleClass="mandatory" />
+								<p:inputTextarea id="descriptionUpdate" value="#{manufacturedProductBean.entitySelected.description}" styleClass="inputTextArea" />
+
+								<h:outputLabel value="Situação:" for="situationUpdate" styleClass="mandatory" />
+								<p:selectOneMenu id="situationUpdate" value="#{manufacturedProductBean.entitySelected.situation}" styleClass="inputText">
+									<f:selectItems value="#{manufacturedProductBean.manufacturedProductsSituationOptions}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{manufacturedProductBean.update}" oncomplete="editManufacturedProducts.hide()" update="formManufacturedProducts:manufacturedProducts" ajax="false" />
+							<p:commandButton id="btImprimir" value="Imprimir" icon="ui-icon-print" action="#{manufacturedProductBean.extractInformation}" ajax="false"/>
+							<p:commandButton id="btClose" value="Cancelar" onclick="editManufacturedProducts.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

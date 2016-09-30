@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="../../style/template.xhtml">
+		<ui:define name="content">
+			<h:form id="formProviders">
+				<p:outputPanel>
+					<h:outputLabel value="Fornecedores" styleClass="title" />
+				</p:outputPanel>
+				<p:separator />
+				<h:outputText value="Abaixo está a relação dos fornecedores da empresa." />
+				<p />
+				<br/>
+
+				<p:panel id="panelData" style="width: 98%">
+					<p:dataTable resizableColumns="false" emptyMessage="Não há registros a serem apresentados." filteredValue="#{providerBean.filteredProviders}" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10" var="provider" value="#{providerBean.providerDataModel}" id="providers" editable="false" selection="#{providerBean.entitySelected}" rowKey="#{provider.id}" selectionMode="single">
+
+						<p:ajax event="rowSelect" listener="#{providerBean.onRowSelect}" update=":formEdit:panelEdit :formProviders:buttons" />
+						<p:ajax event="rowUnselect" listener="#{providerBean.onRowUnselect}" />
+
+						<p:column headerText="CNPJ" style="width:15%" filterMatchMode="contains" filterBy="#{provider.cnpj}">
+							<h:outputText value="#{provider.cnpj}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Nome" style="width:20%" filterMatchMode="contains" filterBy="#{provider.name}">
+							<h:outputText value="#{provider.name}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Endereço" style="width:20%" filterMatchMode="contains" filterBy="#{provider.address}">
+							<h:outputText value="#{provider.address}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="Telefone" style="width:15%" filterMatchMode="contains" filterBy="#{provider.telephone}">
+							<h:outputText value="#{provider.telephone}" style="width:10%" />
+						</p:column>
+
+						<p:column headerText="E-mail" style="width:20%" filterMatchMode="contains" filterBy="#{provider.email}">
+							<h:outputText value="#{provider.email}" style="width:10%" />
+						</p:column>
+
+					</p:dataTable>
+					<p />
+					<p:panel id="buttons">
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:panelGroup>
+								<p:commandButton id="btIncluir" value="Incluir" onclick="insertProvider.show()" type="button" icon="ui-icon-plus" />
+								<p:commandButton id="btEditar" value="Editar / Visualizar" onclick="editProvider.show()" type="button" ajax="false" icon="ui-icon-pencil" disabled="#{providerBean.entitySelected.id==null}" />
+								<p:commandButton id="btRemover" value="Remover" onclick="confirm.show()" type="button" ajax="false" icon="ui-icon-closethick" disabled="#{providerBean.entitySelected.id==null}">
+									<p:confirm header="Confirmação" message="Você tem certeza que deseja excluir este registro?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Exportar" icon="ui-icon-disk" action="#{providerBean.extractReport}" ajax="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:panel>
+				</p:panel>
+			</h:form>
+
+			<p:confirmDialog id="confirm" widgetVar="confirm" global="true" showEffect="fade" hideEffect="explode" severity="alert" closable="false">
+				<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" action="#{providerBean.remove}" update=":formProviders:providers" />
+				<p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<p:dialog id="modalProvider" header="Inserir Fornecedor" widgetVar="insertProvider" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formInsert">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelInsert">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+								<p:inputText id="name" value="#{providerBean.entity.name}" styleClass="inputText"/>
+
+								<h:outputLabel value="CNPJ:" for="cnpj" />
+								<p:inputMask mask="99.999.999/9999-99" id="cnpj" value="#{providerBean.entity.cnpj}" styleClass="inputText"/>
+
+								<h:outputLabel value="Endereço:" for="address" styleClass="mandatory" />
+								<p:inputText id="address" value="#{providerBean.entity.address}"  styleClass="inputText"/>
+
+								<h:outputLabel value="CEP:" for="cep" />
+								<p:inputMask mask="99999-999" id="cep" value="#{providerBean.entity.cep}" styleClass="inputText"/>
+
+								<h:outputLabel value="Telefone:" for="telephone" styleClass="mandatory" />
+								<p:inputMask mask="(99) 9999-9999" id="telephone" value="#{providerBean.entity.telephone}" styleClass="inputText"/>
+
+								<h:outputLabel value="E-mail:" for="email" styleClass="mandatory" />
+								<p:inputText id="email" value="#{providerBean.entity.email}" styleClass="inputText"/>
+
+								<h:outputLabel value="Home Page:" for="homePage" />
+								<p:inputText id="homePage" value="#{providerBean.entity.homePage}" styleClass="inputText"/>
+
+								<h:outputLabel value="Estado:" for="state" />
+								<p:selectOneMenu id="state" value="#{providerBean.state}" converter="stateConverter" styleClass="inputText">
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{stateBean.all}" var="e" itemValue="#{e}" itemLabel="#{e.name}" />
+									<p:ajax update="city" listener="#{providerBean.handleCityChange}" />
+
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Cidade:" for="city" />
+								<p:selectOneMenu id="city" value="#{providerBean.city}" converter="cityConverter" styleClass="inputText">
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{providerBean.cities}" var="c" itemValue="#{c}" itemLabel="#{c.name}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<div align="center">
+							<p:commandButton id="btSave" value="Salvar" icon="ui-icon-check" action="#{providerBean.save}" oncomplete="insertProvider.hide(); cleanProviderInsert();" ajax="false" />
+							<p:commandButton id="btSaveAndContinue" value="Salvar e Continuar" icon="ui-icon-circle-arrow-e" action="#{providerBean.save}" update=":formProviders:providers panelInsert" />
+							<p:commandButton id="btClose" value="Cancelar" onclick="insertProvider.hide()" icon="ui-icon-close" />
+						</div>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="modalProviderEdit" header="Editar Fornecedor" widgetVar="editProvider" modal="true" appendTo="@(body)" resizable="false" showEffect="clip" hideEffect="clip">
+				<h:form id="formEdit">
+					<div align="right">
+						<h:outputText value="Campos em negrito são obrigatórios." style="font-size: 11px;" />
+					</div>
+					<p:panel id="panelEdit">
+						<div align="center">
+							<p:panelGrid columns="2" styleClass="panelNB">
+								<h:outputLabel value="Nome:" for="name" styleClass="mandatory" />
+								<p:inputText id="name" value="#{providerBean.entitySelected.name}" styleClass="inputText"/>
+
+								<h:outputLabel value="CNPJ:" for="cnpj" />
+								<p:inputMask mask="99.999.999/9999-99" id="cnpj" value="#{providerBean.entitySelected.cnpj}" styleClass="inputText"/>
+
+								<h:outputLabel value="Endereço:" for="address" styleClass="mandatory" />
+								<p:inputText id="address" value="#{providerBean.entitySelected.address}" styleClass="inputText"/>
+
+								<h:outputLabel value="CEP:" for="cep" />
+								<p:inputMask mask="99999-999" id="cep" value="#{providerBean.entitySelected.cep}" styleClass="inputText"/>
+
+								<h:outputLabel value="Telefone:" for="telephone" styleClass="mandatory" />
+								<p:inputMask mask="(99) 9999-9999" id="telephone" value="#{providerBean.entitySelected.telephone}" styleClass="inputText"/>
+
+								<h:outputLabel value="E-mail:" for="email" styleClass="mandatory" />
+								<p:inputText id="email" value="#{providerBean.entitySelected.email}" styleClass="inputText"/>
+
+								<h:outputLabel value="Home Page:" for="homePage" />
+								<p:inputText id="homePage" value="#{providerBean.entitySelected.homePage}" styleClass="inputText"/>
+
+								<h:outputLabel value="Estado:" for="state" />
+								<p:selectOneMenu id="state" value="#{providerBean.state}" converter="stateConverter" styleClass="inputText">
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{stateBean.all}" var="e" itemValue="#{e}" itemLabel="#{e.name}" />
+									<p:ajax update="city" listener="#{providerBean.handleCityChange}" />
+
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Cidade:" for="city" />
+								<p:selectOneMenu id="city" value="#{providerBean.city}" converter="cityConverter" styleClass="inputText">
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{providerBean.cities}" var="c" itemValue="#{c}" itemLabel="#{c.name}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<br />
+						</div>
+					</p:panel>
+					<br />
+					<p:panel>
+						<p:commandButton id="btSaveUpdate" value="Salvar" icon="ui-icon-check" action="#{providerBean.update}" oncomplete="editProvider.hide()" update=":formProviders:providers" ajax="false" />
+						<p:commandButton id="btImprimirUpdate" value="Imprimir" icon="ui-icon-print" action="#{providerBean.extractInformation}" ajax="false" />
+						<p:commandButton id="btCloseUpdate" value="Cancelar" onclick="editProvider.hide()" icon="ui-icon-close" />
+
+					</p:panel>
+				</h:form>
+			</p:dialog>
+
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

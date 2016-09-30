@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<title>Tooling</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<link rel="StyleSheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/style/project.css" media="screen" />
+	<link rel="shortcut icon" type="image/png" href="#{facesContext.externalContext.requestContextPath}/images/logotipo2.jpg" />
+
+	<style>
+#layoutNorth {
+	z-index: 200 !important;
+}
+
+#layoutNorth div {
+	overflow: visible;
+}
+</style>
+	<script src="../util/Util.js" />
+</h:head>
+<h:body>
+<script>
+PrimeFaces.locales['pt'] = {  
+        closeText: 'Fechar',  
+        prevText: 'Anterior',  
+        nextText: 'Próximo',  
+        currentText: 'Começo',  
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],  
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],  
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],  
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],  
+        dayNamesMin: ['D','S','T','Q','Q','S','S'],  
+        weekHeader: 'Semana',  
+        firstDay: 1,  
+        isRTL: false,  
+        showMonthAfterYear: false,  
+        yearSuffix: '',  
+        timeOnlyTitle: 'Só Horas',  
+        timeText: 'Tempo',  
+        hourText: 'Hora',  
+        minuteText: 'Minuto',  
+        secondText: 'Segundo',  
+        currentText: 'Data Atual',  
+        ampm: false,  
+        month: 'Mês',  
+        week: 'Semana',  
+        day: 'Dia',  
+        allDayText : 'Todo Dia'  
+    };  
+
+</script>
+	<p:growl id="growl" autoUpdate="true" showDetail="true" />
+
+	<p:layout fullPage="true" >
+		<p:layoutUnit position="north" id="layoutNorth" style="border: none !important; ">
+			<h:form styleClass="teste">
+
+				<p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();" />
+				<p:dialog modal="true" widgetVar="statusDialog" showHeader="false" draggable="false" closable="false" resizable="false">
+					<p:graphicImage value="/images/ajax-loader.gif" />
+				</p:dialog>
+				<p:menubar style="height:3%" rendered="#{employeeBean.currentEmployee != null}">
+
+					<p:menuitem style="left:100px">
+
+						<h:commandLink action="#{redirectBean.goToHome}" rendered="#{employeeBean.currentEmployee.profile=='ADMINISTRATOR'}">
+							<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" />
+						</h:commandLink>
+						<h:commandLink action="#{redirectBean.goToHomeManagerOS}" rendered="#{employeeBean.currentEmployee.profile=='MANAGER_OS'}">
+							<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" />
+						</h:commandLink>
+						<h:commandLink action="#{redirectBean.goToHomeOperator}" rendered="#{employeeBean.currentEmployee.profile=='OPERATOR'}">
+							<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" />
+						</h:commandLink>
+						<h:commandLink action="#{redirectBean.goToHomeBuyer}" rendered="#{employeeBean.currentEmployee.profile=='BUYER'}">
+							<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" />
+						</h:commandLink>
+						<h:commandLink action="#{redirectBean.goToHomeFinancial}" rendered="#{employeeBean.currentEmployee.profile=='FINANCIAL'}">
+							<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="120" height="35" />
+						</h:commandLink>
+					</p:menuitem>
+
+					<p:submenu label="Financeiro" icon="ui-icon-cart" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'FINANCIAL'}">
+						<p:menuitem value="Contas a Pagar" action="#{redirectBean.goToPayables}" ajax="false" />
+						<p:menuitem value="Contas a Receber" action="#{redirectBean.goToReceivables}" ajax="false" />
+					</p:submenu>
+
+					<p:submenu label="Negócios" icon="ui-icon-transferthick-e-w" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER' ||  employeeBean.currentEmployee.profile== 'SELLER'}">
+
+						<p:submenu label="Orçamentos">
+							<p:menuitem value="Entrada" action="#{redirectBean.goToInputBudgets}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'SELLER'}" />
+							<p:menuitem value="Saída" action="#{redirectBean.goToOutputBudgets}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}" />
+						</p:submenu>
+						<p:menuitem value="Compras" ajax="false" action="#{redirectBean.goToPurchases}" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}" />
+						<p:menuitem value="Vendas" ajax="false" action="#{redirectBean.goToSales}" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'SELLER'}" />
+					</p:submenu>
+
+					<p:submenu label="Produção" icon="ui-icon-wrench" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'MANAGER_OS' || employeeBean.currentEmployee.profile== 'OPERATOR' || employeeBean.currentEmployee.profile== 'SELLER'}">
+						<p:menuitem value="Máquinas" action="#{redirectBean.goToMachines}" ajax="false" rendered="#{employeeBean.currentEmployee.profile!= 'OPERATOR' and  employeeBean.currentEmployee.profile!= 'SELLER'}" />
+						<p:menuitem value="Ordens de Serviço" action="#{redirectBean.goToServiceOrders}" ajax="false" rendered="#{employeeBean.currentEmployee.profile!= 'SELLER'}" />
+						<p:menuitem value="Produtos Manufaturados" action="#{redirectBean.goToManufacturedProduct}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'MANAGER_OS' || employeeBean.currentEmployee.profile== 'SELLER'}" />
+						<p:menuitem value="Apontamentos" action="#{redirectBean.goToNotations}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile == 'OPERATOR'}" />
+					</p:submenu>
+
+					<p:submenu label="Cadastros" icon="ui-icon-copy" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}">
+						<p:menuitem value="Clientes" action="#{redirectBean.goToCustomers}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR'}" />
+						<p:menuitem value="Fornecedores" action="#{redirectBean.goToProviders}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR'}" />
+						<p:menuitem value="Produtos" action="#{redirectBean.goToProducts}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}" />
+						<p:menuitem value="Funcionários" action="#{redirectBean.goToEmployees}" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR'}" />
+					</p:submenu>
+
+					<p:submenu label="Relatórios" icon="ui-icon-document" rendered="#{employeeBean.currentEmployee.profile!='OPERATOR' and 1==2}">
+						<p:menuitem value="Ordens de Serviço" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'MANAGER_OS'}" />
+						<p:menuitem value="Compras" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}" />
+						<p:menuitem value="Vendas" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'SELLER'}" />
+						<p:submenu label="Contas" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'FINANCIAL'}">
+							<p:menuitem value="Contas à Receber" ajax="false" />
+							<p:menuitem value="Contas à Pagar" ajax="false" />
+						</p:submenu>
+						<p:menuitem value="Apontamentos" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'MANAGER_OS'}" />
+						<p:submenu label="Orçamentos" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER' || employeeBean.currentEmployee.profile== 'SELLER'}">
+							<p:menuitem value="Entrada" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'SELLER'}" />
+							<p:menuitem value="Saída" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'BUYER'}" />
+						</p:submenu>
+						<p:menuitem value="Produtos Manufaturados" ajax="false" rendered="#{employeeBean.currentEmployee.profile== 'ADMINISTRATOR' || employeeBean.currentEmployee.profile== 'MANAGER_OS'}" />
+					</p:submenu>
+
+					<p:submenu label="#{employeeBean.currentEmployee.name}" style="position: absolute; right: 4px;" icon="ui-icon-person">
+						<p:menuitem value="Sair" action="#{employeeBean.doLogoff}" ajax="false" icon="ui-icon-arrowreturnthick-1-e" />
+					</p:submenu>
+
+					<p:menuitem>
+						<p:panelGrid columns="2" styleClass="panelNB">
+							<h:outputText value="Tema:" for="themeSwitch" style="font-weight: bold" />
+							<p:themeSwitcher id="themeSwitch" value="#{themeBean.entity.theme}" style="width:200px" effect="fade">
+								<f:selectItem itemLabel="Escolha o tema:" itemValue="" />
+								<f:selectItems value="#{themeBean.themes}" />
+								<p:ajax listener="#{themeBean.update}" />
+							</p:themeSwitcher>
+						</p:panelGrid>
+					</p:menuitem>
+				</p:menubar>
+
+				<p:menubar style="height:3%" rendered="#{customerBean.currentCustomer != null}">
+					<p:menuitem style="left:100px">
+						<p:graphicImage url="#{facesContext.externalContext.requestContextPath}/../images/tools-clip-art-1.png" width="35" height="35" />
+					</p:menuitem>
+
+					<p:menuitem>
+						<h:outputText value="Seja Bem-vindo, #{customerBean.currentCustomer.name}!" styleClass="mandatory" />
+					</p:menuitem>
+
+					<p:submenu label="#{customerBean.currentCustomer.name}" style="position: absolute; right: 4px;" icon="ui-icon-person">
+						<p:menuitem value="Sair" action="#{customerBean.doLogoff}" ajax="false" icon="ui-icon-arrowreturnthick-1-e" />
+					</p:submenu>
+				</p:menubar>
+
+			</h:form>
+		</p:layoutUnit>
+		<p:layoutUnit  position="west" size="20%" style="border: none !important; height: 100%; width:100% " rendered="#{employeeBean.currentEmployee != null}">
+			<ui:include src="../pages/compositions/leftPanel.xhtml" />
+		</p:layoutUnit>
+		<p:layoutUnit position="west" size="20%" style="border: none !important; height: 100%; width:100% " rendered="#{customerBean.currentCustomer != null}">
+			<ui:include src="../pages/compositions/leftPanelCustomer.xhtml" />
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" styleClass="layout" style="height:98%; border: none !important;" resizable="true">
+			<ui:insert name="content" />
+		</p:layoutUnit>
+
+	</p:layout>
+</h:body>
+</html>
