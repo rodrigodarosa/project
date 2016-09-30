@@ -10,8 +10,8 @@ public class PayableValidator {
 	public static boolean validate(Payable entity) {
 		boolean valid = true;
 		FacesMessage message = null;
-		String detail = "Campo Obrigatório";
-		String detail2 = "Não encontrado";
+		String detail = "Campo Obrigat\u00F3rio";
+		String detail2 = "N\u00E3o encontrado";
 
 		if (entity.getProvider() == null) {
 			valid = false;
@@ -20,13 +20,13 @@ public class PayableValidator {
 		}
 		if (entity.getDocumentNumber() == 0 || entity.getDocumentNumber() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nº do Documento", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "N\u00BA do Documento", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		
 		if (entity.getPurchase() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nº da Compra", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "N\u00BA da Compra", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		
@@ -47,7 +47,7 @@ public class PayableValidator {
 		}
 		if (entity.getDischargeSituation() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situação", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situa\u00E7\u00E3o", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 		if (entity.getTotalValue() == 0.0) {

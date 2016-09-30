@@ -36,7 +36,7 @@ public class NotationValidator {
 
 		if(entity.getStartDate() != null && entity.getEndDate() != null && entity.getStartDate().after(entity.getEndDate())){
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Inconsistência de Per\u00EDodo", detail3 );
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Inconsist\u00EAncia de Per\u00EDodo", detail3 );
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 

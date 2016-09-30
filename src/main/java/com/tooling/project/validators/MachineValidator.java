@@ -10,7 +10,7 @@ public class MachineValidator {
 	public static boolean validate(Machine entity) {
 		boolean valid = true;
 		FacesMessage message = null;
-		String detail = "Campo Obrigatório";
+		String detail = "Campo Obrigat\u00F3rio";
 
 		if (entity.getName() == null || entity.getName().equals("")) {
 			valid = false;
@@ -19,7 +19,7 @@ public class MachineValidator {
 		}
 		if (entity.getSituation() == null) {
 			valid = false;
-			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situação", detail);
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Situa\u00E7\u00E3o", detail);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
 

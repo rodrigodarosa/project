@@ -37,27 +37,27 @@ public class Mail {
         try {
 
               Message message = new MimeMessage(session);
-              message.setFrom(new InternetAddress("techtoolsferramentaria@gmail.com", "TechTools - Orçamento")); //Remetente
+              message.setFrom(new InternetAddress("techtoolsferramentaria@gmail.com", "TechTools - Or\u00E7amento")); //Remetente
 
               Address[] toUser = InternetAddress.parse(outputBudget.getProvider().getEmail());  
               SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:ss");
 
               message.setRecipients(Message.RecipientType.TO, toUser);
-              message.setSubject("Solicitação de Orçamento");
-              message.setText("Olá, Este é um e-mail automático!"
+              message.setSubject("Solicita\u00E7\u00E3o de Or\u00E7amento");
+              message.setText("Ol\u00E1, Este \u00E9 um e-mail autom\u00E1tico!"
             		  +"\n\n\n"
             		  +"Solicita-se os seguintes produtos:"
             		  +"\n\n"
-            		  +"Descrição: "+outputBudget.getDescription()+"\n"
-            		  +"Especificação Técnica: "+outputBudget.getTechnicalSpecification()+"\n"
+            		  +"Descri\u00E7\u00E3o: "+outputBudget.getDescription()+"\n"
+            		  +"Especifica\u00E7\u00E3o T\u00E9cnica: "+outputBudget.getTechnicalSpecification()+"\n"
             		  +"Quantidade: "+outputBudget.getQuantity()+"\n"
-            		  +"Data necessária para entrega: "+sdf.format(outputBudget.getDeliveryDate())+"\n"
+            		  +"Data necess\u00E1ria para entrega: "+sdf.format(outputBudget.getDeliveryDate())+"\n"
             		  +"\n"
             		  +"\n"
-            		  +"Qualquer Dúvida, entrar em contato!"
+            		  +"Qualquer Dvida, entrar em contato!"
             		  +"\n\n"
             		  +"Orçamento Solicitado por "+outputBudget.getEmployee().getName()+"\n"
-            		  +"RESPONDER ESTA SOLICITAÇÃO DE ORÇAMENTO NO SEGUINTE E-MAIL: " +outputBudget.getEmployee().getEmail()+"\n"
+            		  +"RESPONDER ESTA SOLICITA\u00C7\u00C3O DE OR\u00C7AMENTO NO SEGUINTE E-MAIL: " +outputBudget.getEmployee().getEmail()+"\n"
             		  +"\n\n\n"
             		  +"TechTools Ferramentaria."
             		  );
